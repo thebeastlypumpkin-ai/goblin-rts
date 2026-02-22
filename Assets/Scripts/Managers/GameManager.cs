@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     [field: SerializeField]
     public GameState CurrentState { get; private set; } = GameState.Boot;
 
+    [SerializeField] private GameConfig config;
+    public GameConfig Config => config;
+
     private void Awake()
     {
         // Enforce singleton
@@ -26,6 +29,11 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        if (config == null)
+        {
+            Debug.LogWarning("[GameManager] No GameConfig assigned. Assign GameConfig_Default in the inspector.");
+        }
 
         Debug.Log("[GameManager] Awake -> Singleton set, persists across scenes.");
     }
