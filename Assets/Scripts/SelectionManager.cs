@@ -40,7 +40,7 @@ public class SelectionManager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, unitLayerMask))
         {
             Unit unit = hit.collider.GetComponent<Unit>();
-            if (unit != null)
+            if (unit != null && !unit.IsDead)
             {
                 SelectUnit(unit);
                 return;
@@ -50,24 +50,42 @@ public class SelectionManager : MonoBehaviour
         // Clicked not-a-unit => deselect
         DeselectCurrent();
     }
-
     void HandleMoveClick()
     {
-        // Only issue move if we have a selected unit
         if (currentSelectedUnit == null)
             return;
 
+        // ✅ NEW: If selected unit died, deselect it
+        if (currentSelectedUnit.IsDead)
+        {
+            DeselectCurrent();
+            return;
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayerMask))
+        // 1) Priority: right-click a unit to attack it
+        if (Physics.Raycast(ray, out RaycastHit unitHit, 1000f, unitLayerMask))
         {
-            Vector3 destination = hit.point;
+            Unit targetUnit = unitHit.collider.GetComponent<Unit>();
 
-            // We'll implement MoveTo in Step 5
-            currentSelectedUnit.MoveTo(destination);
+            // Don't allow targeting yourself
+            if (targetUnit != null && targetUnit != currentSelectedUnit)
+            {
+                currentSelectedUnit.SetTarget(targetUnit);
+                Debug.Log("Attack Target: " + targetUnit.name);
+                return;
+            }
+        }
+
+        // 2) Otherwise: right-click ground to move
+        if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
+        {
+            currentSelectedUnit.ClearTarget();
+            currentSelectedUnit.MoveTo(groundHit.point);
+            Debug.Log("Move Command to: " + groundHit.point);
         }
     }
-
     void SelectUnit(Unit unit)
     {
         if (currentSelectedUnit != null)
