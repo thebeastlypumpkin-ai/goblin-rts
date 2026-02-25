@@ -542,6 +542,7 @@ GameObject:
   - component: {fileID: 866918622}
   - component: {fileID: 866918621}
   - component: {fileID: 866918620}
+  - component: {fileID: 866918626}
   m_Layer: 6
   m_Name: Unit_Target
   m_TagString: Untagged
@@ -680,6 +681,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &866918626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866918619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827c4a538f401094ca3739ac9e1d495e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMember
+  team: 2
 --- !u!1 &962346499
 GameObject:
   m_ObjectHideFlags: 0
@@ -694,6 +708,7 @@ GameObject:
   - component: {fileID: 962346500}
   - component: {fileID: 962346504}
   - component: {fileID: 962346505}
+  - component: {fileID: 962346506}
   m_Layer: 6
   m_Name: Unit_Test
   m_TagString: Untagged
@@ -832,6 +847,19 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &962346506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 962346499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827c4a538f401094ca3739ac9e1d495e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMember
+  team: 1
 --- !u!1 &1436747500
 GameObject:
   m_ObjectHideFlags: 0

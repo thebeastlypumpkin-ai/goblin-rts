@@ -23,6 +23,7 @@ public class Unit : MonoBehaviour
     private float nextAttackTime;
     private Unit currentTarget;
     private bool isDead;
+    private TeamMember teamMember;
 
     void Awake()
     {
@@ -30,6 +31,7 @@ public class Unit : MonoBehaviour
         unitRenderer = GetComponent<Renderer>();
         originalColor = unitRenderer.material.color;
         agent = GetComponent<NavMeshAgent>();
+        teamMember = GetComponent<TeamMember>();
     }
 
     void Update()
@@ -44,6 +46,17 @@ public class Unit : MonoBehaviour
         {
             ClearTarget();
             return;
+        }
+
+        // Safety: if target is not an enemy, drop it
+        if (teamMember != null)
+        {
+            TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
+            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+            {
+                ClearTarget();
+                return;
+            }
         }
 
         // Check distance
@@ -65,7 +78,7 @@ public class Unit : MonoBehaviour
         if (Time.time >= nextAttackTime)
         {
             nextAttackTime = Time.time + attackCooldown;
-            currentTarget.TakeDamage(attackDamage);
+            currentTarget.TakeDamage(attackDamage, this);
         }
     }
 
@@ -92,18 +105,34 @@ public class Unit : MonoBehaviour
         if (isDead) return;
         if (target == null) return;
 
+        if (teamMember != null)
+        {
+            TeamMember otherTeam = target.GetComponent<TeamMember>();
+            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+                return;
+        }
+
         currentTarget = target;
     }
-
     public void ClearTarget()
     {
         currentTarget = null;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Unit attacker)
     {
         if (currentHealth <= 0f)
             return;
+
+        // Friendly-fire prevention (damage-layer failsafe)
+        if (attacker != null && attacker != this)
+        {
+            TeamMember attackerTeam = attacker.GetComponent<TeamMember>();
+            TeamMember myTeam = GetComponent<TeamMember>();
+
+            if (attackerTeam != null && myTeam != null && !myTeam.IsEnemy(attackerTeam))
+                return;
+        }
 
         currentHealth -= amount;
 
