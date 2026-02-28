@@ -61,7 +61,6 @@ public class SelectionManager : MonoBehaviour
             DeselectCurrent();
             return;
         }
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         // 1) Priority: right-click a unit to attack it
@@ -69,8 +68,8 @@ public class SelectionManager : MonoBehaviour
         {
             Unit targetUnit = unitHit.collider.GetComponent<Unit>();
 
-            // Don't allow targeting yourself
-            if (targetUnit != null && targetUnit != currentSelectedUnit)
+            // valid target only (not null, not self, not dead)
+            if (targetUnit != null && targetUnit != currentSelectedUnit && !targetUnit.IsDead)
             {
                 currentSelectedUnit.SetTarget(targetUnit);
                 Debug.Log("Attack Target: " + targetUnit.name);
@@ -81,8 +80,7 @@ public class SelectionManager : MonoBehaviour
         // 2) Otherwise: right-click ground to move
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
         {
-            currentSelectedUnit.ClearTarget();
-            currentSelectedUnit.MoveTo(groundHit.point);
+            currentSelectedUnit.CommandMoveTo(groundHit.point);
             Debug.Log("Move Command to: " + groundHit.point);
         }
     }

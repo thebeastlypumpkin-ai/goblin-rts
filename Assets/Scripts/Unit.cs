@@ -12,6 +12,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attacksPerSecond = 1f;
+    [SerializeField] private float detectionRange = 8f;
 
     public bool IsSelected { get; private set; }
 
@@ -24,6 +25,10 @@ public class Unit : MonoBehaviour
     private Unit currentTarget;
     private bool isDead;
     private TeamMember teamMember;
+    private float nextScanTime;
+    [SerializeField] private float scanInterval = 0.25f;
+    [SerializeField] private float manualCommandIgnoreTime = 2f;
+    private float ignoreAggroUntilTime;
 
     void Awake()
     {
@@ -37,6 +42,19 @@ public class Unit : MonoBehaviour
     void Update()
     {
         if (isDead) return;
+
+        // Periodic enemy scan
+        if (Time.time >= nextScanTime && Time.time >= ignoreAggroUntilTime)
+        {
+            nextScanTime = Time.time + scanInterval;
+
+            if (currentTarget == null)
+            {
+                Unit found = FindClosestEnemyInRange();
+                if (found != null)
+                    currentTarget = found;
+            }
+        }
 
         if (currentTarget == null)
             return;
@@ -53,6 +71,17 @@ public class Unit : MonoBehaviour
         {
             TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
             if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+            {
+                ClearTarget();
+                return;
+            }
+        }
+
+        // If target wandered too far away, drop it (prevents endless map-wide chasing)
+        if (currentTarget != null)
+        {
+            float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist > detectionRange * detectionRange)
             {
                 ClearTarget();
                 return;
@@ -96,9 +125,18 @@ public class Unit : MonoBehaviour
     {
         if (agent != null && agent.isOnNavMesh)
         {
-            agent.isStopped = false; // ✅ ensure movement resumes
+            agent.isStopped = false; // ensure movement resumes
             agent.SetDestination(destination);
         }
+    }
+
+    public void CommandMoveTo(Vector3 destination)
+    {
+        // Player-issued move command overrides auto-aggro temporarily
+        ignoreAggroUntilTime = Time.time + manualCommandIgnoreTime;
+        ClearTarget();
+
+        MoveTo(destination); // use internal movement
     }
     public void SetTarget(Unit target)
     {
@@ -142,6 +180,40 @@ public class Unit : MonoBehaviour
         {
             Die();
         }
+
+    }
+    private Unit FindClosestEnemyInRange()
+    {
+        // Find all Units in the scene (fine for prototype; we’ll optimize later if needed)
+        Unit[] allUnits = Object.FindObjectsByType<Unit>(FindObjectsSortMode.None);
+
+        Unit closest = null;
+        float closestSqrDist = float.MaxValue;
+
+        foreach (Unit u in allUnits)
+        {
+            if (u == null || u == this) continue;
+            if (u.IsDead) continue;
+
+            // Team filtering (only enemies)
+            if (teamMember != null)
+            {
+                TeamMember otherTeam = u.GetComponent<TeamMember>();
+                if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+                    continue;
+            }
+
+            float sqrDist = (u.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist > detectionRange * detectionRange) continue;
+
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closest = u;
+            }
+        }
+
+        return closest;
     }
     private void Die()
     {
