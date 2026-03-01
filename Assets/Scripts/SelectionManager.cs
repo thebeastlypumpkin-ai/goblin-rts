@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -6,11 +7,10 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private LayerMask groundLayerMask;
 
-    private Unit currentSelectedUnit;
+    private List<Unit> selectedUnits = new List<Unit>();
 
     void Awake()
     {
-        // Auto-fill masks if you forget to set them in Inspector.
         if (unitLayerMask.value == 0)
             unitLayerMask = LayerMask.GetMask("Unit");
 
@@ -20,17 +20,24 @@ public class SelectionManager : MonoBehaviour
 
     void Update()
     {
-        // Left click = select
         if (Input.GetMouseButtonDown(0))
-        {
             HandleSelectionClick();
-        }
 
-        // Right click = move command
         if (Input.GetMouseButtonDown(1))
-        {
             HandleMoveClick();
-        }
+    }
+
+    private Unit GetPrimarySelected()
+    {
+        return (selectedUnits.Count > 0) ? selectedUnits[0] : null;
+    }
+
+    private void ClearSelection()
+    {
+        foreach (var u in selectedUnits)
+            if (u != null) u.SetSelected(false);
+
+        selectedUnits.Clear();
     }
 
     void HandleSelectionClick()
@@ -42,65 +49,88 @@ public class SelectionManager : MonoBehaviour
             Unit unit = hit.collider.GetComponent<Unit>();
             if (unit != null && !unit.IsDead)
             {
-                SelectUnit(unit);
+                bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+                if (shiftHeld)
+                    ToggleUnitSelection(unit);
+                else
+                    SelectUnit(unit);
+
                 return;
             }
         }
 
-        // Clicked not-a-unit => deselect
         DeselectCurrent();
     }
+
+    void ToggleUnitSelection(Unit unit)
+    {
+        if (selectedUnits.Contains(unit))
+        {
+            unit.SetSelected(false);
+            selectedUnits.Remove(unit);
+            Debug.Log("Removed from selection: " + unit.name);
+        }
+        else
+        {
+            selectedUnits.Add(unit);
+            unit.SetSelected(true);
+            Debug.Log("Added to selection: " + unit.name);
+        }
+    }
+
     void HandleMoveClick()
     {
-        if (currentSelectedUnit == null)
-            return;
+        Unit primary = GetPrimarySelected();
+        if (primary == null) return;
 
-        // ✅ NEW: If selected unit died, deselect it
-        if (currentSelectedUnit.IsDead)
+        if (primary.IsDead)
         {
             DeselectCurrent();
             return;
         }
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // 1) Priority: right-click a unit to attack it
+        // Right-click unit = attack
         if (Physics.Raycast(ray, out RaycastHit unitHit, 1000f, unitLayerMask))
         {
             Unit targetUnit = unitHit.collider.GetComponent<Unit>();
-
-            // valid target only (not null, not self, not dead)
-            if (targetUnit != null && targetUnit != currentSelectedUnit && !targetUnit.IsDead)
+            if (targetUnit != null && !targetUnit.IsDead)
             {
-                currentSelectedUnit.CommandAttack(targetUnit);
+                foreach (var u in selectedUnits)
+                    if (u != null && u != targetUnit && !u.IsDead)
+                        u.CommandAttack(targetUnit);
+
                 Debug.Log("Attack Target: " + targetUnit.name);
                 return;
             }
         }
 
-        // 2) Otherwise: right-click ground to move
+        // Right-click ground = move
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
         {
-            currentSelectedUnit.CommandMoveTo(groundHit.point);
+            foreach (var u in selectedUnits)
+                if (u != null && !u.IsDead)
+                    u.CommandMoveTo(groundHit.point);
+
             Debug.Log("Move Command to: " + groundHit.point);
         }
     }
+
     void SelectUnit(Unit unit)
     {
-        if (currentSelectedUnit != null)
-            currentSelectedUnit.SetSelected(false);
-
-        currentSelectedUnit = unit;
-        currentSelectedUnit.SetSelected(true);
-
+        ClearSelection();
+        selectedUnits.Add(unit);
+        unit.SetSelected(true);
         Debug.Log("Selected: " + unit.name);
     }
 
     void DeselectCurrent()
     {
-        if (currentSelectedUnit != null)
+        if (selectedUnits.Count > 0)
         {
-            currentSelectedUnit.SetSelected(false);
-            currentSelectedUnit = null;
+            ClearSelection();
             Debug.Log("Deselected");
         }
     }
