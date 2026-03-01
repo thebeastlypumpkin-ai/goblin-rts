@@ -71,7 +71,7 @@ public class SelectionManager : MonoBehaviour
             // valid target only (not null, not self, not dead)
             if (targetUnit != null && targetUnit != currentSelectedUnit && !targetUnit.IsDead)
             {
-                currentSelectedUnit.SetTarget(targetUnit);
+                currentSelectedUnit.CommandAttack(targetUnit);
                 Debug.Log("Attack Target: " + targetUnit.name);
                 return;
             }

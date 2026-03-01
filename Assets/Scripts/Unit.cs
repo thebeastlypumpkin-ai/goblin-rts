@@ -1,9 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
  
 {
+    public static List<Unit> ActiveUnits = new List<Unit>();
     [Header("Health")]
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -29,6 +31,13 @@ public class Unit : MonoBehaviour
     [SerializeField] private float scanInterval = 0.25f;
     [SerializeField] private float manualCommandIgnoreTime = 2f;
     private float ignoreAggroUntilTime;
+    [SerializeField] private float manualAttackLeashRange = 25f;
+    private bool hasManualAttackOrder;
+
+    private void OnDestroy()
+    {
+        ActiveUnits.Remove(this);
+    }
 
     void Awake()
     {
@@ -37,6 +46,7 @@ public class Unit : MonoBehaviour
         originalColor = unitRenderer.material.color;
         agent = GetComponent<NavMeshAgent>();
         teamMember = GetComponent<TeamMember>();
+        ActiveUnits.Add(this);
     }
 
     void Update()
@@ -59,9 +69,9 @@ public class Unit : MonoBehaviour
         if (currentTarget == null)
             return;
 
-        // If target died, clear it
         if (currentTarget.IsDead)
         {
+            hasManualAttackOrder = false;
             ClearTarget();
             return;
         }
@@ -72,20 +82,21 @@ public class Unit : MonoBehaviour
             TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
             if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
             {
+                hasManualAttackOrder = false;
                 ClearTarget();
                 return;
             }
         }
 
-        // If target wandered too far away, drop it (prevents endless map-wide chasing)
-        if (currentTarget != null)
+        // If target wandered too far away, drop it (manual orders get a bigger leash)
+        float leash = hasManualAttackOrder ? manualAttackLeashRange : detectionRange;
+
+        float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
+        if (sqrDist > leash * leash)
         {
-            float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
-            if (sqrDist > detectionRange * detectionRange)
-            {
-                ClearTarget();
-                return;
-            }
+            hasManualAttackOrder = false;
+            ClearTarget();
+            return;
         }
 
         // Check distance
@@ -132,12 +143,25 @@ public class Unit : MonoBehaviour
 
     public void CommandMoveTo(Vector3 destination)
     {
+
+        hasManualAttackOrder = false;   // <-- add this line
+
         // Player-issued move command overrides auto-aggro temporarily
         ignoreAggroUntilTime = Time.time + manualCommandIgnoreTime;
         ClearTarget();
 
         MoveTo(destination); // use internal movement
     }
+
+    public void CommandAttack(Unit target)
+    {
+        // Manual attack should immediately override any move-ignore window
+        ignoreAggroUntilTime = 0f;
+        hasManualAttackOrder = true;
+
+        SetTarget(target); // uses your existing enemy checks
+    }
+
     public void SetTarget(Unit target)
     {
         if (isDead) return;
@@ -184,13 +208,11 @@ public class Unit : MonoBehaviour
     }
     private Unit FindClosestEnemyInRange()
     {
-        // Find all Units in the scene (fine for prototype; we’ll optimize later if needed)
-        Unit[] allUnits = Object.FindObjectsByType<Unit>(FindObjectsSortMode.None);
-
         Unit closest = null;
         float closestSqrDist = float.MaxValue;
+        float rangeSqr = detectionRange * detectionRange;
 
-        foreach (Unit u in allUnits)
+        foreach (Unit u in ActiveUnits)
         {
             if (u == null || u == this) continue;
             if (u.IsDead) continue;
@@ -204,7 +226,7 @@ public class Unit : MonoBehaviour
             }
 
             float sqrDist = (u.transform.position - transform.position).sqrMagnitude;
-            if (sqrDist > detectionRange * detectionRange) continue;
+            if (sqrDist > rangeSqr) continue;
 
             if (sqrDist < closestSqrDist)
             {
@@ -219,6 +241,11 @@ public class Unit : MonoBehaviour
     {
         if (isDead) return;   // Prevent double execution
         isDead = true;
+
+        hasManualAttackOrder = false;
+        currentTarget = null;
+
+        ActiveUnits.Remove(this);
 
         Debug.Log(name + " has died.");
 
