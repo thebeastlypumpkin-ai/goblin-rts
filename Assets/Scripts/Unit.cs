@@ -29,10 +29,12 @@ public class Unit : MonoBehaviour
     private TeamMember teamMember;
     private float nextScanTime;
     [SerializeField] private float scanInterval = 0.25f;
-    [SerializeField] private float manualCommandIgnoreTime = 2f;
     private float ignoreAggroUntilTime;
     [SerializeField] private float manualAttackLeashRange = 25f;
     private bool hasManualAttackOrder;
+    private bool hasMoveOrder;
+    private Vector3 moveOrderDestination;
+    [SerializeField] private float moveArrivalThreshold = 0.5f;
 
     private void OnDestroy()
     {
@@ -52,6 +54,16 @@ public class Unit : MonoBehaviour
     void Update()
     {
         if (isDead) return;
+
+        if (hasMoveOrder)
+        {
+            float sqr = (transform.position - moveOrderDestination).sqrMagnitude;
+            if (sqr <= moveArrivalThreshold * moveArrivalThreshold)
+            {
+                hasMoveOrder = false;
+                ignoreAggroUntilTime = 0f; // aggro allowed again after arriving
+            }
+        }
 
         // Periodic enemy scan
         if (Time.time >= nextScanTime && Time.time >= ignoreAggroUntilTime)
@@ -143,23 +155,25 @@ public class Unit : MonoBehaviour
 
     public void CommandMoveTo(Vector3 destination)
     {
+        hasManualAttackOrder = false;
 
-        hasManualAttackOrder = false;   // <-- add this line
+        hasMoveOrder = true;
+        moveOrderDestination = destination;
 
-        // Player-issued move command overrides auto-aggro temporarily
-        ignoreAggroUntilTime = Time.time + manualCommandIgnoreTime;
+        ignoreAggroUntilTime = float.PositiveInfinity; // ignore aggro until we arrive
         ClearTarget();
 
-        MoveTo(destination); // use internal movement
+        MoveTo(destination);
     }
 
     public void CommandAttack(Unit target)
     {
-        // Manual attack should immediately override any move-ignore window
+        hasMoveOrder = false;
+
         ignoreAggroUntilTime = 0f;
         hasManualAttackOrder = true;
 
-        SetTarget(target); // uses your existing enemy checks
+        SetTarget(target);
     }
 
     public void SetTarget(Unit target)
