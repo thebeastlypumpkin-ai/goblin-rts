@@ -6,6 +6,9 @@ public class SelectionManager : MonoBehaviour
     [Header("Layers")]
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private LayerMask groundLayerMask;
+    [Header("Group Move Spacing")]
+    [SerializeField] private float formationSpacing = 1.5f;   // distance between units
+    [SerializeField] private int formationColumns = 4;        // grid width
 
     private List<Unit> selectedUnits = new List<Unit>();
 
@@ -106,15 +109,30 @@ public class SelectionManager : MonoBehaviour
                 return;
             }
         }
-
-        // Right-click ground = move
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
         {
-            foreach (var u in selectedUnits)
-                if (u != null && !u.IsDead)
-                    u.CommandMoveTo(groundHit.point);
+            for (int i = 0; i < selectedUnits.Count; i++)
+            {
+                Unit u = selectedUnits[i];
+                if (u == null || u.IsDead) continue;
 
-            Debug.Log("Move Command to: " + groundHit.point);
+                int row = i / formationColumns;
+                int column = i % formationColumns;
+
+                float formationWidth = formationColumns * formationSpacing;
+                float formationHeight = Mathf.Ceil((float)selectedUnits.Count / formationColumns) * formationSpacing;
+
+                float offsetX = column * formationSpacing - formationWidth / 2f + formationSpacing / 2f;
+                float offsetZ = row * formationSpacing - formationHeight / 2f + formationSpacing / 2f;
+
+                Vector3 offset = new Vector3(offsetX, 0, offsetZ);
+
+                Vector3 targetPosition = groundHit.point + offset;
+
+                u.CommandMoveTo(targetPosition);
+            }
+
+            Debug.Log("Formation Move Command issued.");
         }
     }
 
