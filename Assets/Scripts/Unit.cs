@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 
 public class Unit : MonoBehaviour
  
@@ -15,6 +16,14 @@ public class Unit : MonoBehaviour
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attacksPerSecond = 1f;
     [SerializeField] private float detectionRange = 8f;
+
+    public float MaxHealth => maxHealth;
+    public float CurrentHealth => currentHealth;
+    public float HealthNormalized => (maxHealth <= 0f) ? 0f : (currentHealth / maxHealth);
+
+    // UI / systems can subscribe to these
+    public event Action<float> OnHealthChanged; // sends HealthNormalized (0..1)
+    public event Action<Unit> OnDied;
 
     public bool IsSelected { get; private set; }
 
@@ -35,10 +44,19 @@ public class Unit : MonoBehaviour
     private bool hasMoveOrder;
     private Vector3 moveOrderDestination;
     [SerializeField] private float moveArrivalThreshold = 0.5f;
+    [Header("UI")]
+    [SerializeField] private GameObject healthBarPrefab;
+    [SerializeField] private Vector3 healthBarOffset = new Vector3(0f, 2f, 0f);
+
+    private GameObject healthBarInstance;
+    private Transform healthBarTransform;
 
     private void OnDestroy()
     {
         ActiveUnits.Remove(this);
+
+        if (healthBarInstance != null)
+            Destroy(healthBarInstance);
     }
 
     void Awake()
@@ -49,6 +67,18 @@ public class Unit : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         teamMember = GetComponent<TeamMember>();
         ActiveUnits.Add(this);
+        OnHealthChanged?.Invoke(HealthNormalized);
+        if (healthBarPrefab != null)
+        {
+            healthBarInstance = Instantiate(healthBarPrefab, transform.position + healthBarOffset, Quaternion.identity);
+            healthBarTransform = healthBarInstance.transform;
+
+            HealthBarUI ui = healthBarInstance.GetComponent<HealthBarUI>();
+            if (ui != null)
+                ui.Bind(this);
+            else
+                Debug.LogWarning("HealthBar prefab missing HealthBarUI component.");
+        }
     }
 
     void Update()
@@ -77,6 +107,8 @@ public class Unit : MonoBehaviour
                     currentTarget = found;
             }
         }
+
+       
 
         if (currentTarget == null)
             return;
@@ -134,6 +166,7 @@ public class Unit : MonoBehaviour
         }
     }
 
+
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
@@ -166,29 +199,47 @@ public class Unit : MonoBehaviour
         MoveTo(destination);
     }
 
-    public void CommandAttack(Unit target)
+    public bool CommandAttack(Unit target)
     {
+        if (target == null) return false;
+
+        // Manual attack interrupts move order
         hasMoveOrder = false;
 
         ignoreAggroUntilTime = 0f;
         hasManualAttackOrder = true;
 
-        SetTarget(target);
+        bool accepted = SetTarget(target);
+
+        if (!accepted)
+        {
+            TeamMember myTeam = GetComponent<TeamMember>();
+            TeamMember tTeam = target.GetComponent<TeamMember>();
+            Debug.LogWarning($"{name} refused target {target.name}. MyTeam={(myTeam ? myTeam.Team.ToString() : "NONE")} TargetTeam={(tTeam ? tTeam.Team.ToString() : "NONE")}");
+        }
+
+        return accepted;
     }
 
-    public void SetTarget(Unit target)
+    public bool SetTarget(Unit target)
     {
-        if (isDead) return;
-        if (target == null) return;
+        if (isDead) return false;
+        if (target == null) return false;
 
         if (teamMember != null)
         {
             TeamMember otherTeam = target.GetComponent<TeamMember>();
-            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
-                return;
+
+            // If either is missing a TeamMember, we will NOT allow targeting (forces consistent setup)
+            if (otherTeam == null)
+                return false;
+
+            if (!teamMember.IsEnemy(otherTeam))
+                return false;
         }
 
         currentTarget = target;
+        return true;
     }
     public void ClearTarget()
     {
@@ -211,6 +262,7 @@ public class Unit : MonoBehaviour
         }
 
         currentHealth -= amount;
+        OnHealthChanged?.Invoke(HealthNormalized);
 
         Debug.Log(name + " took " + amount + " damage. Current HP: " + currentHealth);
 
@@ -255,6 +307,7 @@ public class Unit : MonoBehaviour
     {
         if (isDead) return;   // Prevent double execution
         isDead = true;
+        OnDied?.Invoke(this);
 
         hasManualAttackOrder = false;
         currentTarget = null;
@@ -272,5 +325,8 @@ public class Unit : MonoBehaviour
 
         // Disable further interaction
         enabled = false;
+
+        if (healthBarInstance != null)
+            Destroy(healthBarInstance);
     }
 }

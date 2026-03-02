@@ -12,6 +12,11 @@ public class SelectionManager : MonoBehaviour
 
     private List<Unit> selectedUnits = new List<Unit>();
 
+    private void PruneSelection()
+    {
+        selectedUnits.RemoveAll(u => u == null || u.IsDead);
+    }
+
     void Awake()
     {
         if (unitLayerMask.value == 0)
@@ -49,7 +54,7 @@ public class SelectionManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, unitLayerMask))
         {
-            Unit unit = hit.collider.GetComponent<Unit>();
+            Unit unit = hit.collider.GetComponentInParent<Unit>();
             if (unit != null && !unit.IsDead)
             {
                 bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -84,29 +89,31 @@ public class SelectionManager : MonoBehaviour
 
     void HandleMoveClick()
     {
-        Unit primary = GetPrimarySelected();
-        if (primary == null) return;
+        PruneSelection();
 
-        if (primary.IsDead)
-        {
-            DeselectCurrent();
+        if (selectedUnits.Count == 0)
             return;
-        }
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         // Right-click unit = attack
         if (Physics.Raycast(ray, out RaycastHit unitHit, 1000f, unitLayerMask))
         {
-            Unit targetUnit = unitHit.collider.GetComponent<Unit>();
+            Unit targetUnit = unitHit.collider.GetComponentInParent<Unit>();
             if (targetUnit != null && !targetUnit.IsDead)
             {
                 foreach (var u in selectedUnits)
                     if (u != null && u != targetUnit && !u.IsDead)
                         u.CommandAttack(targetUnit);
+                int acceptedCount = 0;
 
-                Debug.Log("Attack Target: " + targetUnit.name);
-                return;
+                foreach (var u in selectedUnits)
+                {
+                    if (u == null || u.IsDead || u == targetUnit) continue;
+                    if (u.CommandAttack(targetUnit)) acceptedCount++;
+                }
+
+                Debug.Log($"Attack Target: {targetUnit.name} (accepted by {acceptedCount}/{selectedUnits.Count})");
             }
         }
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
