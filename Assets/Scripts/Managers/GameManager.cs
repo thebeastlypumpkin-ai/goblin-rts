@@ -1,4 +1,5 @@
 using UnityEngine;
+using GoblinRTS.Economy;
 
 public enum GameState
 {
@@ -17,6 +18,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameConfig config;
     public GameConfig Config => config;
 
+    public EssenceWallet Essence { get; private set; }
+
+    [SerializeField] private int startingEssence = 0;
+
     private void Awake()
     {
         // Enforce singleton
@@ -29,6 +34,9 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        Essence = new EssenceWallet(startingEssence);
+        Essence.OnChanged += v => Debug.Log($"[Economy] Essence = {v}");
 
         if (config == null)
         {
