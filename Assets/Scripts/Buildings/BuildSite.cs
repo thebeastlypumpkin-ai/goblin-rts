@@ -11,6 +11,7 @@ public class BuildSite : MonoBehaviour
     public bool isComplete;
 
     private Builder activeBuilder;
+    private GameObject spawnedBuildingInstance;
 
     public void Init(BuildingDefinition def, int team)
     {
@@ -19,6 +20,8 @@ public class BuildSite : MonoBehaviour
 
         buildProgress = 0f;
         isComplete = false;
+        activeBuilder = null;
+        spawnedBuildingInstance = null;
 
         string buildingLabel = (def != null && !string.IsNullOrWhiteSpace(def.buildingName))
             ? def.buildingName
@@ -34,6 +37,15 @@ public class BuildSite : MonoBehaviour
 
     private void Update()
     {
+        // If the spawned building was destroyed, clear the reference and reset this site.
+        if (isComplete && spawnedBuildingInstance == null)
+        {
+            buildProgress = 0f;
+            isComplete = false;
+            activeBuilder = null;
+            return;
+        }
+
         if (isComplete) return;
         if (activeBuilder == null) return;
         if (!activeBuilder.IsBuilding) return;
@@ -54,7 +66,6 @@ public class BuildSite : MonoBehaviour
     private void CompleteConstruction()
     {
         if (isComplete) return;
-        isComplete = true;
 
         if (definition.completedBuildingPrefab == null)
         {
@@ -62,11 +73,21 @@ public class BuildSite : MonoBehaviour
             return;
         }
 
+        if (spawnedBuildingInstance != null)
+        {
+            Debug.LogWarning($"{name} already has a spawned building instance.");
+            return;
+        }
+
+        isComplete = true;
+
         GameObject completedBuilding = Instantiate(
             definition.completedBuildingPrefab,
             transform.position,
             transform.rotation
         );
+
+        spawnedBuildingInstance = completedBuilding;
 
         string buildingLabel = !string.IsNullOrWhiteSpace(definition.buildingName)
             ? definition.buildingName
@@ -74,8 +95,16 @@ public class BuildSite : MonoBehaviour
 
         completedBuilding.name = $"{buildingLabel}_T{teamId}";
 
-        Debug.Log($"{name} construction complete. Spawned {completedBuilding.name}");
+        Building building = completedBuilding.GetComponent<Building>();
+        if (building == null)
+        {
+            Debug.LogError($"{completedBuilding.name} is missing a Building component.");
+        }
+        else
+        {
+            building.Init(definition, teamId);
+        }
 
-        Destroy(gameObject);
+        Debug.Log($"{name} construction complete. Spawned {completedBuilding.name}");
     }
 }

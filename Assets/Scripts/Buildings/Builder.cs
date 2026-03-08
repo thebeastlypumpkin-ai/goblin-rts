@@ -14,9 +14,6 @@ public class Builder : MonoBehaviour
 
     private BuildSite currentBuildSite;
 
-    /// <summary>
-    /// Begin channeling construction at a target build site.
-    /// </summary>
     public void BeginBuild(BuildSite site)
     {
         if (site == null)
@@ -25,16 +22,19 @@ public class Builder : MonoBehaviour
             return;
         }
 
+        Debug.Log($"Builder.BeginBuild called on site: {site.name}");
+
         currentBuildSite = site;
         currentBuildSite.SetBuilder(this);
         isBuilding = true;
+
+        Debug.Log($"Builder isBuilding set to TRUE for site: {currentBuildSite.name}");
     }
 
-    /// <summary>
-    /// Stop channeling construction.
-    /// </summary>
     public void CancelBuild()
     {
+        Debug.Log("Builder.CancelBuild called.");
+
         isBuilding = false;
         currentBuildSite = null;
     }
@@ -45,12 +45,14 @@ public class Builder : MonoBehaviour
 
         if (currentBuildSite == null)
         {
+            Debug.Log("Builder currentBuildSite was null, canceling build.");
             CancelBuild();
             return;
         }
 
         if (currentBuildSite.isComplete)
         {
+            Debug.Log("Builder saw currentBuildSite.isComplete == true, canceling build.");
             CancelBuild();
             return;
         }
@@ -58,12 +60,11 @@ public class Builder : MonoBehaviour
         float dist = Vector3.Distance(transform.position, currentBuildSite.transform.position);
         if (dist > buildRange)
         {
+            Debug.Log($"Builder out of range. Distance={dist}, Range={buildRange}");
             CancelBuild();
-            Debug.Log("Builder cancelled building");
             return;
         }
 
-        // Keep the site linked continuously while building.
         currentBuildSite.SetBuilder(this);
     }
 }
