@@ -102,7 +102,7 @@ public class BuildSite : MonoBehaviour
         }
         else
         {
-            building.Init(definition, teamId);
+            building.Init(definition, teamId, this);
         }
 
         Debug.Log($"{name} construction complete. Spawned {completedBuilding.name}");

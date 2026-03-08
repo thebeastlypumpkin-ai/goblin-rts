@@ -16,6 +16,11 @@ public class BuildingDefinition : ScriptableObject
     [Header("Stats")]
     [Min(1)] public int maxHealth = 100;
 
+    [Header("Passive Repair")]
+    public bool enablePassiveRepair = true;
+    [Min(0f)] public float passiveRepairDelay = 5f;
+    [Min(0f)] public float passiveRepairPerSecond = 5f;
+
     [Header("Income")]
     [Min(0)] public int incomePerTick = 0;
 
