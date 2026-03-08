@@ -6,6 +6,9 @@ public class BuildingDefinition : ScriptableObject
     [Header("Identity")]
     public string buildingName;
 
+    [Header("Prefabs")]
+    public GameObject completedBuildingPrefab;
+
     [Header("Economy")]
     [Min(0)] public int cost = 0;
     [Min(0)] public float buildTimeSeconds = 0f;

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BD_Barracks
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Barracks
+  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
   cost: 200
   buildTimeSeconds: 15
   maxHealth: 1000

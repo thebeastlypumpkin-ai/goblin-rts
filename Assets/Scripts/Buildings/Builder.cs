@@ -12,15 +12,21 @@ public class Builder : MonoBehaviour
 
     [SerializeField] private bool isBuilding;
 
-    // These will be used in later steps/phases
-    private Vector3 _buildSitePosition;
+    private BuildSite currentBuildSite;
 
     /// <summary>
-    /// Begin channeling construction at a target site. (No actual construction logic yet.)
+    /// Begin channeling construction at a target build site.
     /// </summary>
-    public void BeginBuild(Vector3 sitePosition)
+    public void BeginBuild(BuildSite site)
     {
-        _buildSitePosition = sitePosition;
+        if (site == null)
+        {
+            Debug.LogWarning("Builder.BeginBuild called with null BuildSite.");
+            return;
+        }
+
+        currentBuildSite = site;
+        currentBuildSite.SetBuilder(this);
         isBuilding = true;
     }
 
@@ -30,17 +36,34 @@ public class Builder : MonoBehaviour
     public void CancelBuild()
     {
         isBuilding = false;
+        currentBuildSite = null;
     }
 
     private void Update()
     {
         if (!isBuilding) return;
 
-        // If builder wanders too far, cancel channeling (Option A rule).
-        float dist = Vector3.Distance(transform.position, _buildSitePosition);
+        if (currentBuildSite == null)
+        {
+            CancelBuild();
+            return;
+        }
+
+        if (currentBuildSite.isComplete)
+        {
+            CancelBuild();
+            return;
+        }
+
+        float dist = Vector3.Distance(transform.position, currentBuildSite.transform.position);
         if (dist > buildRange)
         {
             CancelBuild();
+            Debug.Log("Builder cancelled building");
+            return;
         }
+
+        // Keep the site linked continuously while building.
+        currentBuildSite.SetBuilder(this);
     }
 }

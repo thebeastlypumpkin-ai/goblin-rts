@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BuilderTestDriver : MonoBehaviour
 {
-    [SerializeField] private Transform buildSite;
+    [SerializeField] private BuildSite buildSite;
 
     private Builder builder;
 
@@ -15,13 +15,13 @@ public class BuilderTestDriver : MonoBehaviour
     {
         if (builder == null || buildSite == null) return;
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.J))
         {
-            builder.BeginBuild(buildSite.position);
+            builder.BeginBuild(buildSite);
             Debug.Log("Builder started building");
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             builder.CancelBuild();
             Debug.Log("Builder cancelled building");
