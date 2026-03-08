@@ -30,4 +30,9 @@ public class BuildingDefinition : ScriptableObject
     [Header("Flags")]
     public bool isFortress = false;
     public bool isProductionBuilding = false;
+
+    [Header("Fortress")]
+    [Min(0)] public int fortressBaselineIncomePerTick = 0;
+    [Min(1)] public int startingTier = 1;
+    [Min(1)] public int maxTier = 3;
 }

@@ -13,10 +13,17 @@ MonoBehaviour:
   m_Name: BD_Fortress
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Fortress
+  completedBuildingPrefab: {fileID: 0}
   cost: 0
-  buildTimeSeconds: 0
+  buildTimeSeconds: 10
   maxHealth: 2000
+  enablePassiveRepair: 1
+  passiveRepairDelay: 5
+  passiveRepairPerSecond: 5
   incomePerTick: 5
   supplyProvided: 60
   isFortress: 1
   isProductionBuilding: 0
+  fortressBaselineIncomePerTick: 5
+  startingTier: 1
+  maxTier: 3

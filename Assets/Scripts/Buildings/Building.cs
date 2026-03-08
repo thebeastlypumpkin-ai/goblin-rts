@@ -1,4 +1,5 @@
 using UnityEngine;
+using GoblinRTS.Economy;
 
 [DisallowMultipleComponent]
 public class Building : MonoBehaviour
@@ -18,11 +19,25 @@ public class Building : MonoBehaviour
     [SerializeField] private float passiveRepairDelay;
     [SerializeField] private float passiveRepairPerSecond;
 
+    [Header("Fortress Runtime")]
+    [SerializeField] private bool isFortress;
+    [SerializeField] private int currentTier;
+    [SerializeField] private int fortressBaselineIncomePerTick;
+
+    private float fortressIncomeTimer;
+
     private float lastDamageTime = -999f;
     private float spawnTime;
 
+    public BuildingDefinition Definition => definition;
+    public int TeamId => teamId;
+
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
+
+    public bool IsFortress => isFortress;
+    public int CurrentTier => currentTier;
+    public int FortressBaselineIncomePerTick => fortressBaselineIncomePerTick;
 
     public void Init(BuildingDefinition def, int team, BuildSite site)
     {
@@ -37,8 +52,14 @@ public class Building : MonoBehaviour
         passiveRepairDelay = def.passiveRepairDelay;
         passiveRepairPerSecond = def.passiveRepairPerSecond;
 
+        isFortress = def.isFortress;
+        currentTier = def.startingTier;
+        fortressBaselineIncomePerTick = def.fortressBaselineIncomePerTick;
+
         lastDamageTime = Time.time;
         spawnTime = Time.time;
+
+        fortressIncomeTimer = 0f;
     }
 
     public void TakeDamage(float amount)
@@ -74,6 +95,7 @@ public class Building : MonoBehaviour
     private void Update()
     {
         HandlePassiveRepair();
+        HandleFortressIncome();
 
         if (Input.GetKeyDown(KeyCode.H))
         {
@@ -95,5 +117,25 @@ public class Building : MonoBehaviour
 
         currentHealth += passiveRepairPerSecond * Time.deltaTime;
         currentHealth = Mathf.Min(currentHealth, maxHealth);
+    }
+
+    private void HandleFortressIncome()
+    {
+        if (!isFortress) return;
+        if (fortressBaselineIncomePerTick <= 0) return;
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.CurrentState != GameState.InGame) return;
+        if (IncomeTicker.Instance == null) return;
+
+        fortressIncomeTimer += Time.deltaTime;
+
+        float tickInterval = IncomeTicker.Instance.TickIntervalSeconds;
+        if (tickInterval <= 0f) return;
+
+        if (fortressIncomeTimer >= tickInterval)
+        {
+            fortressIncomeTimer = 0f;
+            GameManager.Instance.Essence.Add(fortressBaselineIncomePerTick);
+        }
     }
 }

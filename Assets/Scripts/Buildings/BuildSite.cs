@@ -18,10 +18,7 @@ public class BuildSite : MonoBehaviour
         definition = def;
         teamId = team;
 
-        buildProgress = 0f;
-        isComplete = false;
-        activeBuilder = null;
-        spawnedBuildingInstance = null;
+        ResetSiteState();
 
         string buildingLabel = (def != null && !string.IsNullOrWhiteSpace(def.buildingName))
             ? def.buildingName
@@ -35,14 +32,21 @@ public class BuildSite : MonoBehaviour
         activeBuilder = builder;
     }
 
+    public void ResetSiteState()
+    {
+        buildProgress = 0f;
+        isComplete = false;
+        activeBuilder = null;
+        spawnedBuildingInstance = null;
+    }
+
     private void Update()
     {
-        // If the spawned building was destroyed, clear the reference and reset this site.
+        // If the spawned building was destroyed, fully reset this site.
         if (isComplete && spawnedBuildingInstance == null)
         {
-            buildProgress = 0f;
-            isComplete = false;
-            activeBuilder = null;
+            ResetSiteState();
+            Debug.Log($"{name} reset after spawned building was destroyed.");
             return;
         }
 
