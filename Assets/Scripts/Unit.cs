@@ -2,14 +2,20 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
 using System;
+using GoblinRTS.Economy;
+using System.Collections;
 
 public class Unit : MonoBehaviour
- 
 {
     public static List<Unit> ActiveUnits = new List<Unit>();
+
     [Header("Health")]
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
+
+    [Header("Supply")]
+    [SerializeField] private int supplyCost = 1;
+    private bool supplyReserved = false;
 
     [Header("Combat")]
     [SerializeField] private float attackDamage = 10f;
@@ -20,13 +26,13 @@ public class Unit : MonoBehaviour
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     public float HealthNormalized => (maxHealth <= 0f) ? 0f : (currentHealth / maxHealth);
+    public int SupplyCost => supplyCost;
 
     // UI / systems can subscribe to these
     public event Action<float> OnHealthChanged; // sends HealthNormalized (0..1)
     public event Action<Unit> OnDied;
 
     public bool IsSelected { get; private set; }
-
     public bool IsDead => isDead;
 
     private Renderer unitRenderer;
@@ -44,6 +50,7 @@ public class Unit : MonoBehaviour
     private bool hasMoveOrder;
     private Vector3 moveOrderDestination;
     [SerializeField] private float moveArrivalThreshold = 0.5f;
+
     [Header("UI")]
     [SerializeField] private GameObject healthBarPrefab;
     [SerializeField] private Vector3 healthBarOffset = new Vector3(0f, 2f, 0f);
@@ -55,12 +62,19 @@ public class Unit : MonoBehaviour
     {
         ActiveUnits.Remove(this);
 
+        if (supplyReserved && SupplyManager.Instance != null)
+        {
+            SupplyManager.Instance.ReleaseSupply(supplyCost);
+            supplyReserved = false;
+        }
+
         if (healthBarInstance != null)
             Destroy(healthBarInstance);
     }
 
     void Awake()
     {
+
         currentHealth = maxHealth;
         unitRenderer = GetComponent<Renderer>();
         originalColor = unitRenderer.material.color;
@@ -68,6 +82,7 @@ public class Unit : MonoBehaviour
         teamMember = GetComponent<TeamMember>();
         ActiveUnits.Add(this);
         OnHealthChanged?.Invoke(HealthNormalized);
+
         if (healthBarPrefab != null)
         {
             healthBarInstance = Instantiate(healthBarPrefab, transform.position + healthBarOffset, Quaternion.identity);
@@ -78,6 +93,25 @@ public class Unit : MonoBehaviour
                 ui.Bind(this);
             else
                 Debug.LogWarning("HealthBar prefab missing HealthBarUI component.");
+        }
+    }
+
+    private IEnumerator Start()
+    {
+        yield return null; // wait one frame so Fortress sets supply first
+
+        if (SupplyManager.Instance != null)
+        {
+            bool reserved = SupplyManager.Instance.TryConsumeSupply(supplyCost);
+
+            if (!reserved)
+            {
+                Debug.LogWarning($"[Supply] Not enough supply for unit {name}. Needed {supplyCost}, but only {SupplyManager.Instance.FreeSupply} free.");
+                Destroy(gameObject);
+                yield break;
+            }
+
+            supplyReserved = true;
         }
     }
 
@@ -107,8 +141,6 @@ public class Unit : MonoBehaviour
                     currentTarget = found;
             }
         }
-
-       
 
         if (currentTarget == null)
             return;
@@ -165,7 +197,6 @@ public class Unit : MonoBehaviour
             currentTarget.TakeDamage(attackDamage, this);
         }
     }
-
 
     public void SetSelected(bool selected)
     {
@@ -241,6 +272,7 @@ public class Unit : MonoBehaviour
         currentTarget = target;
         return true;
     }
+
     public void ClearTarget()
     {
         currentTarget = null;
@@ -270,8 +302,8 @@ public class Unit : MonoBehaviour
         {
             Die();
         }
-
     }
+
     private Unit FindClosestEnemyInRange()
     {
         Unit closest = null;
@@ -303,6 +335,7 @@ public class Unit : MonoBehaviour
 
         return closest;
     }
+
     private void Die()
     {
         if (isDead) return;   // Prevent double execution
@@ -328,5 +361,7 @@ public class Unit : MonoBehaviour
 
         if (healthBarInstance != null)
             Destroy(healthBarInstance);
+
+        Destroy(gameObject);
     }
 }

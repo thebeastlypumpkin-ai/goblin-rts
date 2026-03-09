@@ -60,6 +60,8 @@ public class Building : MonoBehaviour
         spawnTime = Time.time;
 
         fortressIncomeTimer = 0f;
+
+        UpdateFortressSupplyCap();
     }
 
     public void TakeDamage(float amount)
@@ -82,6 +84,11 @@ public class Building : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} destroyed!");
+
+        if (isFortress && SupplyManager.Instance != null)
+        {
+            SupplyManager.Instance.SetMaxSupply(0);
+        }
 
         if (parentSite != null)
         {
@@ -136,6 +143,32 @@ public class Building : MonoBehaviour
         {
             fortressIncomeTimer = 0f;
             GameManager.Instance.Essence.Add(fortressBaselineIncomePerTick);
+        }
+    }
+
+    private void UpdateFortressSupplyCap()
+    {
+        if (!isFortress) return;
+        if (SupplyManager.Instance == null) return;
+
+        int supplyCap = GetSupplyCapForTier(currentTier);
+        SupplyManager.Instance.SetMaxSupply(supplyCap);
+
+        Debug.Log($"[Supply] Fortress tier {currentTier} set max supply to {supplyCap}.");
+    }
+
+    private int GetSupplyCapForTier(int tier)
+    {
+        switch (tier)
+        {
+            case 1:
+                return 60;
+            case 2:
+                return 120;
+            case 3:
+                return 180;
+            default:
+                return 60;
         }
     }
 }

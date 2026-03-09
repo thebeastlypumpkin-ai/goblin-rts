@@ -445,6 +445,7 @@ GameObject:
   m_Component:
   - component: {fileID: 434647247}
   - component: {fileID: 434647246}
+  - component: {fileID: 434647248}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -482,6 +483,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &434647248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434647245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426df416cab56ac428d094ea775bb5d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoblinRTS.Economy.SupplyManager
+  currentSupplyUsed: 0
+  maxSupply: 0
 --- !u!114 &716256378 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
@@ -803,6 +818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d3ee0587487eb24eb5dbae4a9ddb2da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoblinRTS.Economy.IncomeTicker
+  tickIntervalSeconds: 2
 --- !u!4 &1263206435
 Transform:
   m_ObjectHideFlags: 0
@@ -1296,6 +1312,10 @@ PrefabInstance:
       propertyPath: definition
       value: 
       objectReference: {fileID: 11400000, guid: 97482b87e50b883439c4a305886e9006, type: 2}
+    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
+      propertyPath: completeOnStartForTesting
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8906703417610227147, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.71

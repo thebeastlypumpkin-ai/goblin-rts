@@ -10,6 +10,9 @@ public class BuildSite : MonoBehaviour
     [Range(0f, 1f)] public float buildProgress;
     public bool isComplete;
 
+    [Header("Debug / Testing")]
+    [SerializeField] private bool completeOnStartForTesting = false;
+
     private Builder activeBuilder;
     private GameObject spawnedBuildingInstance;
 
@@ -38,6 +41,15 @@ public class BuildSite : MonoBehaviour
         isComplete = false;
         activeBuilder = null;
         spawnedBuildingInstance = null;
+    }
+
+    private void Awake()
+    {
+        if (completeOnStartForTesting && definition != null && !isComplete)
+        {
+            buildProgress = 1f;
+            CompleteConstruction();
+        }
     }
 
     private void Update()
