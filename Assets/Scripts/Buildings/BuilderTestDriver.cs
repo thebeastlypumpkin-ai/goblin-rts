@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class BuilderTestDriver : MonoBehaviour
 {
-    [SerializeField] private BuildSite buildSite;
-
     private Builder builder;
 
     void Start()
@@ -13,12 +11,20 @@ public class BuilderTestDriver : MonoBehaviour
 
     void Update()
     {
-        if (builder == null || buildSite == null) return;
+        if (builder == null) return;
 
         if (Input.GetKeyDown(KeyCode.J))
         {
-            builder.BeginBuild(buildSite);
-            Debug.Log("Builder started building");
+            BuildSite targetSite = FindFirstUnfinishedBuildSite();
+
+            if (targetSite == null)
+            {
+                Debug.LogWarning("No unfinished BuildSite found.");
+                return;
+            }
+
+            builder.BeginBuild(targetSite);
+            Debug.Log("Builder started building: " + targetSite.name);
         }
 
         if (Input.GetKeyDown(KeyCode.K))
@@ -26,5 +32,18 @@ public class BuilderTestDriver : MonoBehaviour
             builder.CancelBuild();
             Debug.Log("Builder cancelled building");
         }
+    }
+
+    private BuildSite FindFirstUnfinishedBuildSite()
+    {
+        BuildSite[] allSites = FindObjectsByType<BuildSite>(FindObjectsSortMode.None);
+
+        foreach (BuildSite site in allSites)
+        {
+            if (site != null && !site.isComplete)
+                return site;
+        }
+
+        return null;
     }
 }
