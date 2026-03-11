@@ -497,17 +497,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoblinRTS.Economy.SupplyManager
   currentSupplyUsed: 0
   maxSupply: 0
---- !u!114 &716256378 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-  m_PrefabInstance: {fileID: 1644982720}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 149609afc3adce249a5e303e5284c3f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BuildSite
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -788,7 +777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64eb5234f890e884d9210145e46457e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuilderTestDriver
-  buildSite: {fileID: 716256378}
 --- !u!1 &1263206433
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,6 +1377,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingPlacementTester
   placementSystem: {fileID: 2140621216}
   barracksDefinition: {fileID: 11400000, guid: 1bffe76dc892f394a8f9702b3368360c, type: 2}
+  beastPenDefinition: {fileID: 11400000, guid: 6f8a045798aeffb45af81fe11690554c, type: 2}
 --- !u!1001 &44524813706382688
 PrefabInstance:
   m_ObjectHideFlags: 0

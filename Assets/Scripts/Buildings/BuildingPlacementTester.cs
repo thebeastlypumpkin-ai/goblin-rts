@@ -5,6 +5,7 @@ public class BuildingPlacementTester : MonoBehaviour
     [Header("References")]
     [SerializeField] private BuildingPlacementSystem placementSystem;
     [SerializeField] private BuildingDefinition barracksDefinition;
+    [SerializeField] private BuildingDefinition beastPenDefinition;
 
     void Awake()
     {
@@ -23,6 +24,12 @@ public class BuildingPlacementTester : MonoBehaviour
         {
             placementSystem.StartPlacing(barracksDefinition);
             Debug.Log("Barracks placement started.");
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            placementSystem.StartPlacing(beastPenDefinition);
+            Debug.Log("Beast Pen placement started.");
         }
 
         // Press Escape to cancel placement
