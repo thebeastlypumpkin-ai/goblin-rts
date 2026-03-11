@@ -62,6 +62,11 @@ public class Building : MonoBehaviour
         fortressIncomeTimer = 0f;
 
         UpdateFortressSupplyCap();
+
+        if (definition != null && definition.buildingName == "Research Building")
+        {
+            Debug.Log("Research Building active: ready to unlock upgrades.");
+        }
     }
 
     public void TakeDamage(float amount)
