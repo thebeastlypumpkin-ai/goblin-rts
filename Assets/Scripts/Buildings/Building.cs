@@ -24,8 +24,10 @@ public class Building : MonoBehaviour
     [SerializeField] private int fortressBaselineIncomePerTick;
     [Header("Tiering")]
     [SerializeField] private int currentTier = 1;
+    [SerializeField] private int incomePerTick;
 
     private float fortressIncomeTimer;
+    private float genericIncomeTimer;
 
     private float lastDamageTime = -999f;
     private float spawnTime;
@@ -58,6 +60,7 @@ public class Building : MonoBehaviour
 
         isFortress = def.isFortress;
         fortressBaselineIncomePerTick = def.fortressBaselineIncomePerTick;
+        incomePerTick = def.incomePerTick;
 
         currentTier = (definition != null) ? definition.startingTier : 1;
 
@@ -65,6 +68,7 @@ public class Building : MonoBehaviour
         spawnTime = Time.time;
 
         fortressIncomeTimer = 0f;
+        genericIncomeTimer = 0f;
 
         if (isFortress)
         {
@@ -140,6 +144,7 @@ public class Building : MonoBehaviour
     {
         HandlePassiveRepair();
         HandleFortressIncome();
+        HandleGenericBuildingIncome();
 
         if (Input.GetKeyDown(KeyCode.H))
         {
@@ -180,6 +185,26 @@ public class Building : MonoBehaviour
         {
             fortressIncomeTimer = 0f;
             GameManager.Instance.Essence.Add(fortressBaselineIncomePerTick);
+        }
+    }
+
+    private void HandleGenericBuildingIncome()
+    {
+        if (isFortress) return;
+        if (incomePerTick <= 0) return;
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.CurrentState != GameState.InGame) return;
+        if (IncomeTicker.Instance == null) return;
+
+        genericIncomeTimer += Time.deltaTime;
+
+        float tickInterval = IncomeTicker.Instance.TickIntervalSeconds;
+        if (tickInterval <= 0f) return;
+
+        if (genericIncomeTimer >= tickInterval)
+        {
+            genericIncomeTimer = 0f;
+            GameManager.Instance.Essence.Add(incomePerTick);
         }
     }
 

@@ -21,7 +21,11 @@ public class BuildingPlacementSystem : MonoBehaviour
     {
         if (!IsPlacing) return;
 
-        if (!TryGetMouseGroundPoint(out var point)) return;
+        if (!TryGetMouseGroundPoint(out var point))
+        {
+            Debug.LogWarning("No valid ground point found for placement.");
+            return;
+        }
 
         UpdateGhost(point);
 
@@ -90,10 +94,18 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
+        if (selectedDefinition == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: no selected building definition.");
+            return;
+        }
+
         int teamId = 0; // simple for now
         var buildSite = Instantiate(buildSitePrefab, point, Quaternion.identity);
         buildSite.Init(selectedDefinition, teamId);
 
-        Debug.Log($"Placed BuildSite for {selectedDefinition.name} at {point}");
+        Debug.Log($"Placed BuildSite for {selectedDefinition.buildingName} at {point}");
+
+        CancelPlacement();
     }
 }

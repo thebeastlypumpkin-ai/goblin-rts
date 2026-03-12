@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af76fb15964db5248a11890d1acdce05, type: 3}
+  m_Name: BD_EssenceWell
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
+  buildingName: Essence Well
+  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+  cost: 200
+  buildTimeSeconds: 15
+  maxHealth: 1000
+  enablePassiveRepair: 1
+  passiveRepairDelay: 5
+  passiveRepairPerSecond: 5
+  incomePerTick: 0
+  supplyProvided: 0
+  isFortress: 0
+  isProductionBuilding: 1
+  fortressBaselineIncomePerTick: 0
+  supportsTierUpgrades: 1
+  startingTier: 1
+  maxTier: 3

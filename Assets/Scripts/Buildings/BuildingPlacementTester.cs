@@ -7,6 +7,7 @@ public class BuildingPlacementTester : MonoBehaviour
     [SerializeField] private BuildingDefinition barracksDefinition;
     [SerializeField] private BuildingDefinition beastPenDefinition;
     [SerializeField] private BuildingDefinition researchBuildingDefinition;
+    [SerializeField] private BuildingDefinition essenceWellDefinition;
 
     void Awake()
     {
@@ -20,7 +21,6 @@ public class BuildingPlacementTester : MonoBehaviour
     {
         if (placementSystem == null || barracksDefinition == null) return;
 
-        // Press B to start placing Barracks
         if (Input.GetKeyDown(KeyCode.B))
         {
             placementSystem.StartPlacing(barracksDefinition);
@@ -39,7 +39,12 @@ public class BuildingPlacementTester : MonoBehaviour
             Debug.Log("Research Building placement started.");
         }
 
-        // Press Escape to cancel placement
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            placementSystem.StartPlacing(essenceWellDefinition);
+            Debug.Log("Essence Well placement started.");
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             placementSystem.CancelPlacement();
