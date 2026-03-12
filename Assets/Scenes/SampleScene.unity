@@ -1378,6 +1378,7 @@ MonoBehaviour:
   placementSystem: {fileID: 2140621216}
   barracksDefinition: {fileID: 11400000, guid: 1bffe76dc892f394a8f9702b3368360c, type: 2}
   beastPenDefinition: {fileID: 11400000, guid: 6f8a045798aeffb45af81fe11690554c, type: 2}
+  researchBuildingDefinition: {fileID: 11400000, guid: 26c74128f881d144aaed8f1b63ef4a34, type: 2}
 --- !u!1001 &44524813706382688
 PrefabInstance:
   m_ObjectHideFlags: 0

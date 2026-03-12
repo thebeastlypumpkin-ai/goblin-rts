@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BD_ResearchBuilding
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Research Building
-  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+  completedBuildingPrefab: {fileID: 7543697616109106897, guid: c90b519ee779a9b479c08f781a72bfdf, type: 3}
   cost: 300
   buildTimeSeconds: 20
   maxHealth: 1200

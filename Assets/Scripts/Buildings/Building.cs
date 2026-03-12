@@ -21,8 +21,9 @@ public class Building : MonoBehaviour
 
     [Header("Fortress Runtime")]
     [SerializeField] private bool isFortress;
-    [SerializeField] private int currentTier;
     [SerializeField] private int fortressBaselineIncomePerTick;
+    [Header("Tiering")]
+    [SerializeField] private int currentTier = 1;
 
     private float fortressIncomeTimer;
 
@@ -39,6 +40,9 @@ public class Building : MonoBehaviour
     public int CurrentTier => currentTier;
     public int FortressBaselineIncomePerTick => fortressBaselineIncomePerTick;
 
+    public bool SupportsTierUpgrades => definition != null && definition.supportsTierUpgrades;
+    public bool IsAtMaxTier => definition != null && currentTier >= definition.maxTier;
+
     public void Init(BuildingDefinition def, int team, BuildSite site)
     {
         definition = def;
@@ -53,19 +57,47 @@ public class Building : MonoBehaviour
         passiveRepairPerSecond = def.passiveRepairPerSecond;
 
         isFortress = def.isFortress;
-        currentTier = def.startingTier;
         fortressBaselineIncomePerTick = def.fortressBaselineIncomePerTick;
+
+        currentTier = (definition != null) ? definition.startingTier : 1;
 
         lastDamageTime = Time.time;
         spawnTime = Time.time;
 
         fortressIncomeTimer = 0f;
 
-        UpdateFortressSupplyCap();
+        if (isFortress)
+        {
+            UpdateFortressSupplyCap();
+        }
 
         if (definition != null && definition.buildingName == "Research Building")
         {
             Debug.Log("Research Building active: ready to unlock upgrades.");
+        }
+    }
+
+    public void UpgradeBuilding()
+    {
+        if (!SupportsTierUpgrades)
+        {
+            Debug.Log($"{definition.buildingName} does not support tier upgrades.");
+            return;
+        }
+
+        if (IsAtMaxTier)
+        {
+            Debug.Log($"{definition.buildingName} already at max tier.");
+            return;
+        }
+
+        currentTier++;
+
+        Debug.Log($"{definition.buildingName} upgraded to Tier {currentTier}");
+
+        if (isFortress)
+        {
+            UpdateFortressSupplyCap();
         }
     }
 
@@ -153,8 +185,17 @@ public class Building : MonoBehaviour
 
     private void UpdateFortressSupplyCap()
     {
-        if (!isFortress) return;
-        if (SupplyManager.Instance == null) return;
+        if (!isFortress)
+        {
+            Debug.Log("[Supply] UpdateFortressSupplyCap aborted: not a fortress.");
+            return;
+        }
+
+        if (SupplyManager.Instance == null)
+        {
+            Debug.LogWarning("[Supply] UpdateFortressSupplyCap aborted: SupplyManager.Instance is NULL.");
+            return;
+        }
 
         int supplyCap = GetSupplyCapForTier(currentTier);
         SupplyManager.Instance.SetMaxSupply(supplyCap);

@@ -33,6 +33,9 @@ public class BuildingDefinition : ScriptableObject
 
     [Header("Fortress")]
     [Min(0)] public int fortressBaselineIncomePerTick = 0;
+
+    [Header("Tiering")]
+    public bool supportsTierUpgrades = true;
     [Min(1)] public int startingTier = 1;
     [Min(1)] public int maxTier = 3;
 }

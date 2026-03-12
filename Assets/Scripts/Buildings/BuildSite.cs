@@ -43,7 +43,7 @@ public class BuildSite : MonoBehaviour
         spawnedBuildingInstance = null;
     }
 
-    private void Awake()
+    private void Start()
     {
         if (completeOnStartForTesting && definition != null && !isComplete)
         {
