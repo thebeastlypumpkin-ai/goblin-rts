@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: BD_EssenceWell
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Essence Well
-  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 6c49e8f82d2cd564999f3f867470a14d, type: 3}
   cost: 200
-  buildTimeSeconds: 15
+  buildTimeSeconds: 8
   maxHealth: 1000
   enablePassiveRepair: 1
   passiveRepairDelay: 5
   passiveRepairPerSecond: 5
-  incomePerTick: 0
+  incomePerTick: 2
   supplyProvided: 0
   isFortress: 0
-  isProductionBuilding: 1
+  isProductionBuilding: 0
   fortressBaselineIncomePerTick: 0
   supportsTierUpgrades: 1
   startingTier: 1
