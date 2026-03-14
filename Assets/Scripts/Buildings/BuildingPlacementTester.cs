@@ -8,6 +8,7 @@ public class BuildingPlacementTester : MonoBehaviour
     [SerializeField] private BuildingDefinition beastPenDefinition;
     [SerializeField] private BuildingDefinition researchBuildingDefinition;
     [SerializeField] private BuildingDefinition essenceWellDefinition;
+    [SerializeField] private BuildingDefinition towerADefinition;
 
     void Awake()
     {
@@ -43,6 +44,12 @@ public class BuildingPlacementTester : MonoBehaviour
         {
             placementSystem.StartPlacing(essenceWellDefinition);
             Debug.Log("Essence Well placement started.");
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            placementSystem.StartPlacing(towerADefinition);
+            Debug.Log("Tower A placement started.");
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
