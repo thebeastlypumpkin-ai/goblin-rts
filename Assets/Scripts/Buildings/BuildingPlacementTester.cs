@@ -9,6 +9,8 @@ public class BuildingPlacementTester : MonoBehaviour
     [SerializeField] private BuildingDefinition researchBuildingDefinition;
     [SerializeField] private BuildingDefinition essenceWellDefinition;
     [SerializeField] private BuildingDefinition towerADefinition;
+    [SerializeField] private BuildingDefinition towerBDefinition;
+
 
     void Awake()
     {
@@ -57,5 +59,11 @@ public class BuildingPlacementTester : MonoBehaviour
             placementSystem.CancelPlacement();
             Debug.Log("Placement canceled.");
         }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            placementSystem.StartPlacing(towerBDefinition);
+        }
+
     }
 }
