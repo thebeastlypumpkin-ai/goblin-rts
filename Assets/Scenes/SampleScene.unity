@@ -1607,6 +1607,8 @@ MonoBehaviour:
   researchBuildingDefinition: {fileID: 11400000, guid: 26c74128f881d144aaed8f1b63ef4a34, type: 2}
   essenceWellDefinition: {fileID: 11400000, guid: cdc31c8b668a95546a02495550d29468, type: 2}
   towerADefinition: {fileID: 11400000, guid: 6646f416d0d48654087412c04dac1664, type: 2}
+  towerBDefinition: {fileID: 11400000, guid: aeeaaf48c17876549b98063e47eb45bf, type: 2}
+  wallDefinition: {fileID: 11400000, guid: 216928ba2ecea7a4ab7138521a7af361, type: 2}
 --- !u!1001 &44524813706382688
 PrefabInstance:
   m_ObjectHideFlags: 0

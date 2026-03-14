@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af76fb15964db5248a11890d1acdce05, type: 3}
-  m_Name: BD_TowerB
+  m_Name: BD_Wall
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
-  buildingName: Tower B
-  completedBuildingPrefab: {fileID: 7630199160941845254, guid: f4a4bca60c932b740a46931299a3600c, type: 3}
-  cost: 200
-  buildTimeSeconds: 15
-  maxHealth: 1000
+  buildingName: Wall
+  completedBuildingPrefab: {fileID: 7630199160941845254, guid: 10a96a40c1143f44b9b285f1597e8cb7, type: 3}
+  cost: 400
+  buildTimeSeconds: 5
+  maxHealth: 3000
   enablePassiveRepair: 1
   passiveRepairDelay: 5
   passiveRepairPerSecond: 5

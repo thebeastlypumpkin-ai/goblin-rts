@@ -10,6 +10,8 @@ public class BuildingPlacementTester : MonoBehaviour
     [SerializeField] private BuildingDefinition essenceWellDefinition;
     [SerializeField] private BuildingDefinition towerADefinition;
     [SerializeField] private BuildingDefinition towerBDefinition;
+    [SerializeField] private BuildingDefinition wallDefinition;
+
 
 
     void Awake()
@@ -64,6 +66,12 @@ public class BuildingPlacementTester : MonoBehaviour
         {
             placementSystem.StartPlacing(towerBDefinition);
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            placementSystem.StartPlacing(wallDefinition);
+        }
+
 
     }
 }
