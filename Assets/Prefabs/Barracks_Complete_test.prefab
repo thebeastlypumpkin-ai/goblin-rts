@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2149580828187390807}
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
+  - component: {fileID: 5346893961072091193}
   m_Layer: 0
   m_Name: Barracks_Complete_test
   m_TagString: Untagged
@@ -127,3 +128,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   definition: {fileID: 0}
   teamId: 0
+  maxHealth: 0
+  currentHealth: 0
+  enablePassiveRepair: 0
+  passiveRepairDelay: 0
+  passiveRepairPerSecond: 0
+  isFortress: 0
+  fortressBaselineIncomePerTick: 0
+  currentTier: 1
+  incomePerTick: 0
+--- !u!114 &5346893961072091193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e87ae9143d8a94b829a0f7733fe2ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProductionQueue
+  debugUnit: {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
