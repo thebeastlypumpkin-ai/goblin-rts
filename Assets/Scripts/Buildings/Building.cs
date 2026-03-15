@@ -150,6 +150,11 @@ public class Building : MonoBehaviour
         {
             TakeDamage(100f);
         }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            UpgradeBuilding();
+        }
     }
 
     private void HandlePassiveRepair()

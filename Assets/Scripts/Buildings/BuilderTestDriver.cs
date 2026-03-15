@@ -7,6 +7,7 @@ public class BuilderTestDriver : MonoBehaviour
     void Start()
     {
         builder = GetComponent<Builder>();
+        Debug.Log($"[BuilderTestDriver] Active on {name}. Builder found: {(builder != null)}");
     }
 
     void Update()
@@ -15,6 +16,8 @@ public class BuilderTestDriver : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.J))
         {
+            Debug.Log("[BuilderTestDriver] J key pressed.");
+
             BuildSite targetSite = FindFirstUnfinishedBuildSite();
 
             if (targetSite == null)

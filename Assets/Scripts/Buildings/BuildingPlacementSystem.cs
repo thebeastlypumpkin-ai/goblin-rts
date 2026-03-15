@@ -1,4 +1,5 @@
 using UnityEngine;
+using GoblinRTS.Economy;
 
 public class BuildingPlacementSystem : MonoBehaviour
 {
@@ -6,6 +7,7 @@ public class BuildingPlacementSystem : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private BuildSite buildSitePrefab;
+    [SerializeField] private Builder builder;
 
     private BuildingDefinition selectedDefinition;
     private GameObject ghost;
@@ -100,7 +102,32 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
-        int teamId = 0; // simple for now
+        if (GameManager.Instance == null || GameManager.Instance.Essence == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: no Essence wallet found on GameManager.");
+            return;
+        }
+
+        if (!GameManager.Instance.Essence.TrySpend(selectedDefinition.cost))
+        {
+            Debug.Log($"Not enough Essence to place {selectedDefinition.buildingName}. Cost: {selectedDefinition.cost}, Current: {GameManager.Instance.Essence.Current}");
+            return;
+        }
+
+        if (builder == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: builder reference is missing.");
+            return;
+        }
+
+        TeamMember builderTeam = builder.GetComponent<TeamMember>();
+        if (builderTeam == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: builder is missing TeamMember.");
+            return;
+        }
+
+        int teamId = (int)builderTeam.Team;
         var buildSite = Instantiate(buildSitePrefab, point, Quaternion.identity);
         buildSite.Init(selectedDefinition, teamId);
 

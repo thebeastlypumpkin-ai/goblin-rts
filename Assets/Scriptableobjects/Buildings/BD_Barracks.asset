@@ -14,10 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Barracks
   completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
-  cost: 200
+  cost: 25
   buildTimeSeconds: 15
   maxHealth: 1000
+  enablePassiveRepair: 1
+  passiveRepairDelay: 5
+  passiveRepairPerSecond: 5
   incomePerTick: 0
   supplyProvided: 0
   isFortress: 0
   isProductionBuilding: 1
+  fortressBaselineIncomePerTick: 0
+  supportsTierUpgrades: 1
+  startingTier: 1
+  maxTier: 3

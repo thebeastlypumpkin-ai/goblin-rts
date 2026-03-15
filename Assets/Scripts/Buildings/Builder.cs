@@ -13,22 +13,39 @@ public class Builder : MonoBehaviour
     [SerializeField] private bool isBuilding;
 
     private BuildSite currentBuildSite;
+    private Unit unit;
+    private bool isMovingToBuildSite;
+
+    private void Awake()
+    {
+        unit = GetComponent<Unit>();
+
+        if (unit == null)
+        {
+            Debug.LogError($"{name} Builder requires a Unit component on the same GameObject.");
+        }
+    }
 
     public void BeginBuild(BuildSite site)
     {
+        Debug.Log($"[Builder] BeginBuild called on {name} for site {(site != null ? site.name : "NULL")}");
+
         if (site == null)
         {
             Debug.LogWarning("Builder.BeginBuild called with null BuildSite.");
             return;
         }
 
-        Debug.Log($"Builder.BeginBuild called on site: {site.name}");
-
         currentBuildSite = site;
-        currentBuildSite.SetBuilder(this);
-        isBuilding = true;
+        isBuilding = false;
+        isMovingToBuildSite = true;
 
-        Debug.Log($"Builder isBuilding set to TRUE for site: {currentBuildSite.name}");
+        if (unit != null)
+        {
+            unit.CommandMoveTo(site.transform.position);
+        }
+
+        Debug.Log($"Builder moving to build site: {site.name}");
     }
 
     public void CancelBuild()
@@ -36,19 +53,14 @@ public class Builder : MonoBehaviour
         Debug.Log("Builder.CancelBuild called.");
 
         isBuilding = false;
+        isMovingToBuildSite = false;
         currentBuildSite = null;
     }
 
     private void Update()
     {
-        if (!isBuilding) return;
-
         if (currentBuildSite == null)
-        {
-            Debug.Log("Builder currentBuildSite was null, canceling build.");
-            CancelBuild();
             return;
-        }
 
         if (currentBuildSite.isComplete)
         {
@@ -58,9 +70,29 @@ public class Builder : MonoBehaviour
         }
 
         float dist = Vector3.Distance(transform.position, currentBuildSite.transform.position);
+
+        // Step 1: move until in range
+        if (isMovingToBuildSite)
+        {
+            if (dist <= buildRange)
+            {
+                isMovingToBuildSite = false;
+                isBuilding = true;
+                currentBuildSite.SetBuilder(this);
+
+                Debug.Log($"Builder reached site and started construction: {currentBuildSite.name}");
+            }
+
+            return;
+        }
+
+        // Step 2: actively build while in range
+        if (!isBuilding)
+            return;
+
         if (dist > buildRange)
         {
-            Debug.Log($"Builder out of range. Distance={dist}, Range={buildRange}");
+            Debug.Log($"Builder moved out of range. Distance={dist}, Range={buildRange}");
             CancelBuild();
             return;
         }
