@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using GoblinRTS.Economy;
 
 public class ProductionQueue : MonoBehaviour
 {
@@ -26,6 +27,33 @@ public class ProductionQueue : MonoBehaviour
 
     public void EnqueueUnit(UnitDefinition unit)
     {
+        if (unit == null)
+            return;
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("Cannot queue unit: GameManager.Instance is null.");
+            return;
+        }
+
+        if (SupplyManager.Instance == null)
+        {
+            Debug.LogWarning("Cannot queue unit: SupplyManager.Instance is null.");
+            return;
+        }
+
+        if (!GameManager.Instance.Essence.TrySpend(unit.essenceCost))
+        {
+            Debug.Log($"Not enough Essence to queue: {unit.unitName}");
+            return;
+        }
+
+        if (!SupplyManager.Instance.TryConsumeSupply(unit.supplyCost))
+        {
+            Debug.Log($"Not enough Supply to queue: {unit.unitName}");
+            return;
+        }
+
         unitQueue.Enqueue(unit);
 
         Debug.Log($"Unit added to queue: {unit.unitName}");

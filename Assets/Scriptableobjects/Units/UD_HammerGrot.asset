@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: UD_HammerGrot
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   unitName: Hammer Grot
-  unitPrefab: {fileID: 0}
-  producedBy: 0
-  essenceCost: 0
-  buildTime: 0
-  supplyCost: 0
+  unitPrefab: {fileID: 6861561267032273382, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+  producedBy: 2
+  essenceCost: 1000
+  buildTime: 5
+  supplyCost: 2
   icon: {fileID: 0}
