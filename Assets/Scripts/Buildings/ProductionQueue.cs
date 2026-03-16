@@ -11,6 +11,8 @@ public class ProductionQueue : MonoBehaviour
     private float productionTimer = 0f;
 
     [SerializeField] private UnitDefinition debugUnit;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private int teamId = 0;
 
     void Update()
     {
@@ -89,6 +91,8 @@ public class ProductionQueue : MonoBehaviour
         {
             Debug.Log($"Finished training: {currentUnit.unitName}");
 
+            SpawnUnit(currentUnit);
+
             currentUnit = null;
             productionTimer = 0f;
         }
@@ -156,5 +160,36 @@ public class ProductionQueue : MonoBehaviour
         Debug.Log($"Cancelling queued unit: {cancelledUnit.unitName}");
 
         RefundUnit(cancelledUnit);
+    }
+
+    private void SpawnUnit(UnitDefinition unit)
+    {
+        if (unit == null)
+        {
+            Debug.LogWarning("Spawn failed: UnitDefinition is null.");
+            return;
+        }
+
+        if (unit.unitPrefab == null)
+        {
+            Debug.LogWarning($"Spawn failed: {unit.unitName} has no unitPrefab assigned.");
+            return;
+        }
+
+        if (spawnPoint == null)
+        {
+            Debug.LogWarning($"Spawn failed: No spawnPoint assigned on {gameObject.name}.");
+            return;
+        }
+
+        GameObject spawnedObject = Instantiate(unit.unitPrefab, spawnPoint.position, spawnPoint.rotation);
+
+        TeamMember tm = spawnedObject.GetComponent<TeamMember>();
+        if (tm != null)
+        {
+            // team assignment will be handled by prefab default for now
+        }
+
+        Debug.Log($"Spawned unit: {unit.unitName} for team {teamId}");
     }
 }

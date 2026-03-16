@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BD_Fortress
   m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
   buildingName: Fortress
-  completedBuildingPrefab: {fileID: 7543697616109106897, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+  completedBuildingPrefab: {fileID: 4267676454847277768, guid: 41d4167347ca55a4ab1ae0545857f9b3, type: 3}
   cost: 0
   buildTimeSeconds: 10
   maxHealth: 2000
@@ -25,5 +25,6 @@ MonoBehaviour:
   isFortress: 1
   isProductionBuilding: 0
   fortressBaselineIncomePerTick: 5
+  supportsTierUpgrades: 1
   startingTier: 1
   maxTier: 3

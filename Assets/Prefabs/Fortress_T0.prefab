@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &25455152946429826
+--- !u!1 &2403570262747082983
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,7 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6106166537672158919}
+  - component: {fileID: 2015221344841422280}
   m_Layer: 0
   m_Name: SpawnPoint
   m_TagString: Untagged
@@ -16,22 +16,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6106166537672158919
+--- !u!4 &2015221344841422280
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 25455152946429826}
+  m_GameObject: {fileID: 2403570262747082983}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1278620301587937306}
+  m_Father: {fileID: 4543698114895137246}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7543697616109106897
+--- !u!1 &4267676454847277768
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,50 +39,50 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1278620301587937306}
-  - component: {fileID: 2473769498002092197}
-  - component: {fileID: 2149580828187390807}
-  - component: {fileID: 6199600216493730992}
-  - component: {fileID: -39726586105164704}
-  - component: {fileID: 5346893961072091193}
+  - component: {fileID: 4543698114895137246}
+  - component: {fileID: 6740587857599360930}
+  - component: {fileID: 3561592885236911889}
+  - component: {fileID: 7030321241344846852}
+  - component: {fileID: 7820026527836629111}
+  - component: {fileID: 4151953586639009522}
   m_Layer: 0
-  m_Name: Barracks_Complete_test
+  m_Name: Fortress_T0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1278620301587937306
+--- !u!4 &4543698114895137246
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6.94, y: -0, z: -2.59035}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6106166537672158919}
+  - {fileID: 2015221344841422280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2473769498002092197
+--- !u!33 &6740587857599360930
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2149580828187390807
+--- !u!23 &3561592885236911889
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -125,13 +125,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6199600216493730992
+--- !u!65 &7030321241344846852
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -146,41 +146,41 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-39726586105164704
+--- !u!114 &7820026527836629111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a65246f25f10d944938fd21017e0058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: 97482b87e50b883439c4a305886e9006, type: 2}
   teamId: 0
-  maxHealth: 0
-  currentHealth: 0
-  enablePassiveRepair: 0
-  passiveRepairDelay: 0
-  passiveRepairPerSecond: 0
-  isFortress: 0
-  fortressBaselineIncomePerTick: 0
+  maxHealth: 2000
+  currentHealth: 2000
+  enablePassiveRepair: 1
+  passiveRepairDelay: 5
+  passiveRepairPerSecond: 5
+  isFortress: 1
+  fortressBaselineIncomePerTick: 5
   currentTier: 1
-  incomePerTick: 0
---- !u!114 &5346893961072091193
+  incomePerTick: 5
+--- !u!114 &4151953586639009522
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7543697616109106897}
+  m_GameObject: {fileID: 4267676454847277768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e87ae9143d8a94b829a0f7733fe2ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProductionQueue
-  debugUnit: {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
-  spawnPoint: {fileID: 6106166537672158919}
+  debugUnit: {fileID: 0}
+  spawnPoint: {fileID: 2015221344841422280}
   teamId: 0
