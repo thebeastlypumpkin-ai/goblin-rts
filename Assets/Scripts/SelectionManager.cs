@@ -6,11 +6,13 @@ public class SelectionManager : MonoBehaviour
     [Header("Layers")]
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private LayerMask groundLayerMask;
+    [SerializeField] private LayerMask buildingLayerMask;
     [Header("Group Move Spacing")]
     [SerializeField] private float formationSpacing = 1.5f;   // distance between units
     [SerializeField] private int formationColumns = 4;        // grid width
 
     private List<Unit> selectedUnits = new List<Unit>();
+    private Building selectedBuilding;
 
     private void PruneSelection()
     {
@@ -24,6 +26,9 @@ public class SelectionManager : MonoBehaviour
 
         if (groundLayerMask.value == 0)
             groundLayerMask = LayerMask.GetMask("Ground");
+
+        if (buildingLayerMask.value == 0)
+            buildingLayerMask = LayerMask.GetMask("Building");
     }
 
     void Update()
@@ -52,11 +57,25 @@ public class SelectionManager : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+        if (Physics.Raycast(ray, out RaycastHit buildingHit, 1000f, buildingLayerMask))
+        {
+            Building building = buildingHit.collider.GetComponentInParent<Building>();
+            if (building != null)
+            {
+                ClearSelection();
+                selectedBuilding = building;
+                Debug.Log("Selected building: " + building.name);
+                return;
+            }
+        }
+
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, unitLayerMask))
         {
             Unit unit = hit.collider.GetComponentInParent<Unit>();
             if (unit != null && !unit.IsDead)
             {
+                selectedBuilding = null;
+
                 bool shiftHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
                 if (shiftHeld)
@@ -89,6 +108,19 @@ public class SelectionManager : MonoBehaviour
 
     void HandleMoveClick()
     {
+        if (selectedBuilding != null)
+        {
+            Ray buildingRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(buildingRay, out RaycastHit buildingGroundHit, 1000f, groundLayerMask))
+            {
+                selectedBuilding.SetRallyPoint(buildingGroundHit.point);
+                Debug.Log("Rally point set for: " + selectedBuilding.name);
+            }
+
+            return;
+        }
+
         PruneSelection();
 
         if (selectedUnits.Count == 0)
@@ -145,6 +177,7 @@ public class SelectionManager : MonoBehaviour
 
     void SelectUnit(Unit unit)
     {
+        selectedBuilding = null;
         ClearSelection();
         selectedUnits.Add(unit);
         unit.SetSelected(true);
@@ -153,9 +186,13 @@ public class SelectionManager : MonoBehaviour
 
     void DeselectCurrent()
     {
-        if (selectedUnits.Count > 0)
+        bool hadAnythingSelected = selectedUnits.Count > 0 || selectedBuilding != null;
+
+        selectedBuilding = null;
+        ClearSelection();
+
+        if (hadAnythingSelected)
         {
-            ClearSelection();
             Debug.Log("Deselected");
         }
     }

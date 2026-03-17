@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6106166537672158919}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
   - component: {fileID: 5346893961072091193}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barracks_Complete_test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,6 +169,8 @@ MonoBehaviour:
   fortressBaselineIncomePerTick: 0
   currentTier: 1
   incomePerTick: 0
+  hasRallyPoint: 0
+  rallyPoint: {x: 0, y: 0, z: 0}
 --- !u!114 &5346893961072091193
 MonoBehaviour:
   m_ObjectHideFlags: 0

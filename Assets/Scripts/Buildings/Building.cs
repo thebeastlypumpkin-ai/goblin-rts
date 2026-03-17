@@ -35,6 +35,26 @@ public class Building : MonoBehaviour
     public BuildingDefinition Definition => definition;
     public int TeamId => teamId;
 
+    [Header("Rally")]
+    [SerializeField] private bool hasRallyPoint = false;
+    [SerializeField] private Vector3 rallyPoint;
+
+    public bool HasRallyPoint => hasRallyPoint;
+    public Vector3 RallyPoint => rallyPoint;
+
+    public void SetRallyPoint(Vector3 point)
+    {
+        hasRallyPoint = true;
+        rallyPoint = point;
+        Debug.Log($"{name} rally point set to {point}");
+    }
+
+    public void ClearRallyPoint()
+    {
+        hasRallyPoint = false;
+        Debug.Log($"{name} rally point cleared");
+    }
+
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
 

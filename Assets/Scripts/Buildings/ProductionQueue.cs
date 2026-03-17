@@ -190,6 +190,14 @@ public class ProductionQueue : MonoBehaviour
             // team assignment will be handled by prefab default for now
         }
 
+        Building building = GetComponent<Building>();
+        Unit spawnedUnit = spawnedObject.GetComponent<Unit>();
+
+        if (building != null && spawnedUnit != null && building.HasRallyPoint)
+        {
+            spawnedUnit.CommandMoveTo(building.RallyPoint);
+        }
+
         Debug.Log($"Spawned unit: {unit.unitName} for team {teamId}");
     }
 }
