@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2149580828187390807}
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
+  - component: {fileID: 6274217512316579638}
   m_Layer: 0
   m_Name: BeastPen_Complete_test
   m_TagString: Untagged
@@ -32,7 +33,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1383677261144670449}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2473769498002092197
@@ -133,5 +135,55 @@ MonoBehaviour:
   passiveRepairDelay: 0
   passiveRepairPerSecond: 0
   isFortress: 0
-  currentTier: 0
   fortressBaselineIncomePerTick: 0
+  currentTier: 0
+  incomePerTick: 0
+  hasRallyPoint: 0
+  rallyPoint: {x: 0, y: 0, z: 0}
+--- !u!114 &6274217512316579638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e87ae9143d8a94b829a0f7733fe2ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProductionQueue
+  spawnPoint: {fileID: 1383677261144670449}
+  teamId: 0
+  availableUnits:
+  - {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
+--- !u!1 &8482235911658948088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1383677261144670449}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1383677261144670449
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8482235911658948088}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1278620301587937306}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
