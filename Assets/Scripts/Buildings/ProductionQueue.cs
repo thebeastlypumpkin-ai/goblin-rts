@@ -44,6 +44,19 @@ public class ProductionQueue : MonoBehaviour
         ProcessQueue();
     }
 
+    public int AvailableUnitsCount()
+    {
+        return availableUnits.Count;
+    }
+
+    public UnitDefinition GetAvailableUnit(int index)
+    {
+        if (index < 0 || index >= availableUnits.Count)
+            return null;
+
+        return availableUnits[index];
+    }
+
     public void EnqueueUnit(UnitDefinition unit)
     {
         if (building == null)

@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
+    public static SelectionManager Instance;
     [Header("Layers")]
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private LayerMask groundLayerMask;
@@ -13,6 +15,7 @@ public class SelectionManager : MonoBehaviour
 
     private List<Unit> selectedUnits = new List<Unit>();
     private Building selectedBuilding;
+    public Building SelectedBuilding => selectedBuilding;
 
     private void PruneSelection()
     {
@@ -21,6 +24,8 @@ public class SelectionManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
+
         if (unitLayerMask.value == 0)
             unitLayerMask = LayerMask.GetMask("Unit");
 
@@ -33,6 +38,9 @@ public class SelectionManager : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (Input.GetMouseButtonDown(0))
             HandleSelectionClick();
 
