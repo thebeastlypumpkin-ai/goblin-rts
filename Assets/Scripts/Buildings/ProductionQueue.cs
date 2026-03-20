@@ -10,17 +10,24 @@ public class ProductionQueue : MonoBehaviour
 
     private float productionTimer = 0f;
 
-    [SerializeField] private UnitDefinition debugUnit;
+    private Building building;
+
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private int teamId = 0;
+    [SerializeField] private List<UnitDefinition> availableUnits = new List<UnitDefinition>();
+
+    void Awake()
+    {
+        building = GetComponent<Building>();
+    }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
-            if (debugUnit != null)
+            if (availableUnits.Count > 0)
             {
-                EnqueueUnit(debugUnit);
+                EnqueueUnit(availableUnits[0]);
             }
         }
 
@@ -39,6 +46,12 @@ public class ProductionQueue : MonoBehaviour
 
     public void EnqueueUnit(UnitDefinition unit)
     {
+        if (building == null)
+        {
+            Debug.LogWarning("ProductionQueue missing Building reference.");
+            return;
+        }
+
         if (unit == null)
             return;
 

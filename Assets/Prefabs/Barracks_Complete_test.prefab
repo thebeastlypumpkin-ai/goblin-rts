@@ -186,3 +186,5 @@ MonoBehaviour:
   debugUnit: {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
   spawnPoint: {fileID: 6106166537672158919}
   teamId: 0
+  availableUnits:
+  - {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
