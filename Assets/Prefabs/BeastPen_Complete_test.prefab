@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
   - component: {fileID: 6274217512316579638}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BeastPen_Complete_test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +165,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1383677261144670449}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
