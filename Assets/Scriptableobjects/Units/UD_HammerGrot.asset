@@ -15,7 +15,7 @@ MonoBehaviour:
   unitName: Hammer Grot
   unitPrefab: {fileID: 6861561267032273382, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
   producedBy: 2
-  essenceCost: 5
-  buildTime: 5
+  essenceCost: 50
+  buildTime: 6
   supplyCost: 2
   icon: {fileID: 0}

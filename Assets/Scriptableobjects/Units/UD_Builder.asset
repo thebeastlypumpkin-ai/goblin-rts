@@ -15,7 +15,7 @@ MonoBehaviour:
   unitName: Builder
   unitPrefab: {fileID: 6861561267032273382, guid: f1ffd72e478098549b089639569c1364, type: 3}
   producedBy: 0
-  essenceCost: 10
-  buildTime: 5
+  essenceCost: 25
+  buildTime: 8
   supplyCost: 1
   icon: {fileID: 0}

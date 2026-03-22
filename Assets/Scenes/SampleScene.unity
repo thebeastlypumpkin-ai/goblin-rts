@@ -886,7 +886,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   <CurrentState>k__BackingField: 0
   config: {fileID: 11400000, guid: cd73b905073891d46bb5c253eeb19b6a, type: 2}
-  startingEssence: 0
+  startingEssence: 100
 --- !u!4 &434647247
 Transform:
   m_ObjectHideFlags: 0
