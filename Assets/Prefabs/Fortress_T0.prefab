@@ -186,4 +186,4 @@ MonoBehaviour:
   spawnPoint: {fileID: 2015221344841422280}
   teamId: 0
   availableUnits:
-  - {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
+  - {fileID: 11400000, guid: 9e0468453ea78244f9ae37b5fe86f91c, type: 2}

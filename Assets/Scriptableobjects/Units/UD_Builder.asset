@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 270727867b9073a4fb273ec616d5d58b, type: 3}
+  m_Name: UD_Builder
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  unitName: Builder
+  unitPrefab: {fileID: 6861561267032273382, guid: f1ffd72e478098549b089639569c1364, type: 3}
+  producedBy: 0
+  essenceCost: 10
+  buildTime: 5
+  supplyCost: 1
+  icon: {fileID: 0}
