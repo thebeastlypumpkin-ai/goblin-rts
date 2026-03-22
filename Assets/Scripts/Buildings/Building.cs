@@ -35,6 +35,8 @@ public class Building : MonoBehaviour
     public BuildingDefinition Definition => definition;
     public int TeamId => teamId;
 
+    private string BuildingLabel => definition != null ? definition.buildingName : gameObject.name;
+
     [Header("Rally")]
     [SerializeField] private bool hasRallyPoint = false;
     [SerializeField] private Vector3 rallyPoint;
@@ -105,19 +107,19 @@ public class Building : MonoBehaviour
     {
         if (!SupportsTierUpgrades)
         {
-            Debug.Log($"{definition.buildingName} does not support tier upgrades.");
+            Debug.Log($"{BuildingLabel} does not support tier upgrades.");
             return;
         }
 
         if (IsAtMaxTier)
         {
-            Debug.Log($"{definition.buildingName} already at max tier.");
+            Debug.Log($"{BuildingLabel} already at max tier.");
             return;
         }
 
         currentTier++;
 
-        Debug.Log($"{definition.buildingName} upgraded to Tier {currentTier}");
+        Debug.Log($"{BuildingLabel} upgraded to Tier {currentTier}");
 
         if (isFortress)
         {

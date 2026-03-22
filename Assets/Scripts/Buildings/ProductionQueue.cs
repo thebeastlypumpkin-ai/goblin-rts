@@ -12,6 +12,8 @@ public class ProductionQueue : MonoBehaviour
 
     private Building building;
 
+    private int rallySpawnIndex = 0;
+
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private int teamId = 0;
     [SerializeField] private List<UnitDefinition> availableUnits = new List<UnitDefinition>();
@@ -221,7 +223,21 @@ public class ProductionQueue : MonoBehaviour
 
         if (building != null && spawnedUnit != null && building.HasRallyPoint)
         {
-            spawnedUnit.CommandMoveTo(building.RallyPoint);
+            float baseAngleOffset = (Mathf.Abs(gameObject.GetInstanceID()) % 8) * 22.5f;
+            float angle = baseAngleOffset + (rallySpawnIndex * 45f);
+            float radius = 2.5f + (rallySpawnIndex / 8) * 2f;
+
+            Vector3 offset = new Vector3(
+                Mathf.Cos(angle * Mathf.Deg2Rad) * radius,
+                0f,
+                Mathf.Sin(angle * Mathf.Deg2Rad) * radius
+            );
+
+            Vector3 rallyTarget = building.RallyPoint + offset;
+            spawnedUnit.CommandMoveTo(rallyTarget);
+
+            rallySpawnIndex = (rallySpawnIndex + 1) % 8;
+
         }
 
         Debug.Log($"Spawned unit: {unit.unitName} for team {teamId}");
