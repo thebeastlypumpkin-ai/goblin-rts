@@ -50,6 +50,10 @@ public class Unit : MonoBehaviour
     private bool hasMoveOrder;
     private Vector3 moveOrderDestination;
     [SerializeField] private float moveArrivalThreshold = 0.5f;
+    private Vector3 patrolPointA;
+    private Vector3 patrolPointB;
+    private bool patrolToB = true;
+    private bool isPatrolling = false;
 
     [Header("UI")]
     [SerializeField] private GameObject healthBarPrefab;
@@ -57,6 +61,36 @@ public class Unit : MonoBehaviour
 
     private GameObject healthBarInstance;
     private Transform healthBarTransform;
+    private CommandType currentCommand = CommandType.None;
+
+    public enum CommandType
+    {
+        None,
+        Move,
+        Attack,
+        Stop,
+        Hold,
+        Patrol
+    }
+
+    public void CommandPatrol(Vector3 pointA, Vector3 pointB)
+    {
+        currentCommand = CommandType.Patrol;
+
+        patrolPointA = pointA;
+        patrolPointB = pointB;
+        patrolToB = true;
+        isPatrolling = true;
+
+        currentTarget = null;
+        hasMoveOrder = false;
+        hasManualAttackOrder = false;
+
+        if (agent != null)
+        {
+            agent.SetDestination(patrolPointB);
+        }
+    }
 
     private void OnDestroy()
     {
@@ -119,6 +153,23 @@ public class Unit : MonoBehaviour
     {
         if (isDead) return;
 
+        if (Input.GetKeyDown(KeyCode.X) && IsSelected)
+        {
+            CommandStop();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha9) && IsSelected)
+        {
+            CommandHold();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha0) && IsSelected)
+        {
+            Vector3 startPoint = transform.position;
+            Vector3 endPoint = transform.position + transform.forward * 8f;
+            CommandPatrol(startPoint, endPoint);
+        }
+
         if (hasMoveOrder)
         {
             float sqr = (transform.position - moveOrderDestination).sqrMagnitude;
@@ -126,6 +177,15 @@ public class Unit : MonoBehaviour
             {
                 hasMoveOrder = false;
                 ignoreAggroUntilTime = 0f; // aggro allowed again after arriving
+            }
+        }
+
+        if (isPatrolling && agent != null && !agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance + 0.1f)
+            {
+                patrolToB = !patrolToB;
+                agent.SetDestination(patrolToB ? patrolPointB : patrolPointA);
             }
         }
 
@@ -198,6 +258,21 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public void CommandHold()
+    {
+        currentCommand = CommandType.Hold;
+
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
+        }
+
+        currentTarget = null;
+        hasMoveOrder = false;
+        hasManualAttackOrder = false;
+    }
+
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
@@ -217,8 +292,28 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public void CommandStop()
+    {
+        currentCommand = CommandType.Stop;
+
+        // stop movement
+        if (agent != null)
+        {
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
+        }
+
+        // clear combat
+        currentTarget = null;
+        hasManualAttackOrder = false;
+        hasMoveOrder = false;
+    }
+
     public void CommandMoveTo(Vector3 destination)
     {
+
+        currentCommand = CommandType.Move;
+
         hasManualAttackOrder = false;
 
         hasMoveOrder = true;
@@ -232,6 +327,8 @@ public class Unit : MonoBehaviour
 
     public bool CommandAttack(Unit target)
     {
+        currentCommand = CommandType.Attack;
+
         if (target == null) return false;
 
         // Manual attack interrupts move order
