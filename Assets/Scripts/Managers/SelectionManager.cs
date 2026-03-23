@@ -53,7 +53,7 @@ public class SelectionManager : MonoBehaviour
         return (selectedUnits.Count > 0) ? selectedUnits[0] : null;
     }
 
-    private void ClearSelection()
+    public void ClearSelection()
     {
         foreach (var u in selectedUnits)
             if (u != null) u.SetSelected(false);
@@ -183,13 +183,25 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    void SelectUnit(Unit unit)
+    public void SelectUnit(Unit unit)
     {
         selectedBuilding = null;
         ClearSelection();
         selectedUnits.Add(unit);
         unit.SetSelected(true);
         Debug.Log("Selected: " + unit.name);
+    }
+
+    public void AddUnitToSelection(Unit unit)
+    {
+        if (unit == null || unit.IsDead)
+            return;
+
+        if (!selectedUnits.Contains(unit))
+        {
+            selectedUnits.Add(unit);
+            unit.SetSelected(true);
+        }
     }
 
     void DeselectCurrent()
@@ -203,5 +215,11 @@ public class SelectionManager : MonoBehaviour
         {
             Debug.Log("Deselected");
         }
+    }
+
+    public List<Unit> GetSelectedUnits()
+    {
+        PruneSelection();
+        return new List<Unit>(selectedUnits);
     }
 }
