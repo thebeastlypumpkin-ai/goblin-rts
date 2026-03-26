@@ -9,6 +9,7 @@ public class FogOfWarManager : MonoBehaviour
     [SerializeField] private int textureHeight = 128;
     [SerializeField] private float worldWidth = 200f;
     [SerializeField] private float worldHeight = 200f;
+    [SerializeField] private int localTeamId = 0;
 
     [Header("References")]
     [SerializeField] private Renderer fogRenderer;
@@ -58,5 +59,18 @@ public class FogOfWarManager : MonoBehaviour
             return;
 
         fogRenderer.material.mainTexture = fogTexture;
+    }
+
+    private void Update()
+    {
+        UpdateFog();
+    }
+
+    private void UpdateFog()
+    {
+        if (VisionManager.Instance == null) return;
+
+        var emitters = VisionManager.Instance.GetEmittersForTeam(localTeamId);
+
     }
 }
