@@ -21,6 +21,8 @@ public class FogOfWarManager : MonoBehaviour
 
     private Texture2D fogTexture;
     public Texture2D FogTexture => fogTexture;
+    private Color[] currentPixels;
+    private bool[] exploredPixels;
 
     private void Awake()
     {
@@ -42,14 +44,16 @@ public class FogOfWarManager : MonoBehaviour
         fogTexture.filterMode = FilterMode.Point;
         fogTexture.wrapMode = TextureWrapMode.Clamp;
 
-        Color[] pixels = new Color[textureWidth * textureHeight];
+        currentPixels = new Color[textureWidth * textureHeight];
+        exploredPixels = new bool[textureWidth * textureHeight];
 
-        for (int i = 0; i < pixels.Length; i++)
+        for (int i = 0; i < currentPixels.Length; i++)
         {
-            pixels[i] = new Color(0f, 0f, 0f, 0.6f);
+            currentPixels[i] = new Color(0f, 0f, 0f, 0.6f);
+            exploredPixels[i] = false;
         }
 
-        fogTexture.SetPixels(pixels);
+        fogTexture.SetPixels(currentPixels);
         fogTexture.Apply();
     }
 
@@ -58,7 +62,7 @@ public class FogOfWarManager : MonoBehaviour
         if (fogRenderer == null)
             return;
 
-        fogRenderer.material.mainTexture = fogTexture;
+        fogRenderer.material.SetTexture("_BaseMap", fogTexture);
     }
 
     private void Update()
@@ -69,8 +73,78 @@ public class FogOfWarManager : MonoBehaviour
     private void UpdateFog()
     {
         if (VisionManager.Instance == null) return;
+        if (currentPixels == null || fogTexture == null) return;
+
+        for (int i = 0; i < currentPixels.Length; i++)
+        {
+            currentPixels[i] = new Color(0f, 0f, 0f, 0.6f);
+        }
 
         var emitters = VisionManager.Instance.GetEmittersForTeam(localTeamId);
 
+        foreach (var emitter in emitters)
+        {
+            if (emitter == null) continue;
+
+            RevealVisionAtWorldPosition(emitter.transform.position, emitter.VisionRadius);
+        }
+
+        fogTexture.SetPixels(currentPixels);
+        fogTexture.Apply();
+    }
+
+    private bool WorldToFogPixel(Vector3 worldPosition, out int px, out int py)
+    {
+        px = 0;
+        py = 0;
+
+        if (fogRenderer == null)
+            return false;
+
+        Bounds bounds = fogRenderer.bounds;
+
+        float minX = bounds.min.x;
+        float maxX = bounds.max.x;
+        float minZ = bounds.min.z;
+        float maxZ = bounds.max.z;
+
+        float normalizedX = 1f - Mathf.InverseLerp(minX, maxX, worldPosition.x);
+        float normalizedY = 1f - Mathf.InverseLerp(minZ, maxZ, worldPosition.z);
+
+        px = Mathf.RoundToInt(normalizedX * (textureWidth - 1));
+        py = Mathf.RoundToInt(normalizedY * (textureHeight - 1));
+
+        return true;
+    }
+
+    private void RevealVisionAtWorldPosition(Vector3 worldPosition, float visionRadius)
+    {
+        if (!WorldToFogPixel(worldPosition, out int centerX, out int centerY))
+            return;
+
+        float pixelRadiusX = (visionRadius / worldWidth) * textureWidth;
+        float pixelRadiusY = (visionRadius / worldHeight) * textureHeight;
+
+        int minX = Mathf.Max(0, Mathf.FloorToInt(centerX - pixelRadiusX));
+        int maxX = Mathf.Min(textureWidth - 1, Mathf.CeilToInt(centerX + pixelRadiusX));
+        int minY = Mathf.Max(0, Mathf.FloorToInt(centerY - pixelRadiusY));
+        int maxY = Mathf.Min(textureHeight - 1, Mathf.CeilToInt(centerY + pixelRadiusY));
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            for (int x = minX; x <= maxX; x++)
+            {
+                float dx = (x - centerX) / pixelRadiusX;
+                float dy = (y - centerY) / pixelRadiusY;
+
+                if ((dx * dx) + (dy * dy) <= 1f)
+                {
+                    int index = y * textureWidth + x;
+
+                    exploredPixels[index] = true;
+                    currentPixels[index] = new Color(0f, 0f, 0f, 0f);
+                }
+            }
+        }
     }
 }
