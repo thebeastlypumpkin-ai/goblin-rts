@@ -19,3 +19,4 @@ MonoBehaviour:
   buildTime: 6
   supplyCost: 2
   icon: {fileID: 0}
+  visualSquadSize: 8

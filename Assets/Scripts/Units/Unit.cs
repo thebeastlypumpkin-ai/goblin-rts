@@ -22,11 +22,14 @@ public class Unit : MonoBehaviour
     [SerializeField] private float attackRange = 1.5f;
     [SerializeField] private float attacksPerSecond = 1f;
     [SerializeField] private float detectionRange = 8f;
+    [Header("Data")]
+    [SerializeField] private UnitDefinition unitDefinition;
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     public float HealthNormalized => (maxHealth <= 0f) ? 0f : (currentHealth / maxHealth);
     public int SupplyCost => supplyCost;
+    public UnitDefinition UnitDefinition => unitDefinition;
 
     // UI / systems can subscribe to these
     public event Action<float> OnHealthChanged; // sends HealthNormalized (0..1)

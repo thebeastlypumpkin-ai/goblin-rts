@@ -23,4 +23,7 @@ public class UnitDefinition : ScriptableObject
 
     [Header("UI")]
     public Sprite icon;
+
+    [Header("Squad Settings")]
+    public int visualSquadSize = 5;
 }

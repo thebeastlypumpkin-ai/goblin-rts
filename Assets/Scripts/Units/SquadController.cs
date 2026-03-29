@@ -7,6 +7,7 @@ public class SquadController : MonoBehaviour
     [Header("Squad Core")]
     [SerializeField] private bool useSquadSystem = true;
     [SerializeField] private int visualMemberCount = 5;
+    private Unit unit;
 
     private readonly List<Transform> squadVisuals = new List<Transform>();
     private readonly List<GameObject> visualPool = new List<GameObject>();
@@ -20,8 +21,15 @@ public class SquadController : MonoBehaviour
 
     private void Awake()
     {
+        unit = GetComponent<Unit>();
+
         if (visualMemberCount < 1)
             visualMemberCount = 1;
+
+        if (unit != null && unit.UnitDefinition != null)
+        {
+            visualMemberCount = Mathf.Max(1, unit.UnitDefinition.visualSquadSize);
+        }
     }
 
     private void Start()
