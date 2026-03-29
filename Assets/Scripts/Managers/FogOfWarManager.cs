@@ -23,6 +23,9 @@ public class FogOfWarManager : MonoBehaviour
     public Texture2D FogTexture => fogTexture;
     private Color[] currentPixels;
     private bool[] exploredPixels;
+    private readonly Color hiddenFogColor = new Color(0f, 0f, 0f, 0.6f);
+    private readonly Color visibleFogColor = new Color(0f, 0f, 0f, 0f);
+    private bool fogDirty;
 
     private void Awake()
     {
@@ -53,8 +56,14 @@ public class FogOfWarManager : MonoBehaviour
             exploredPixels[i] = false;
         }
 
+        fogDirty = true;
+
+        if (!fogDirty)
+            return;
+
         fogTexture.SetPixels(currentPixels);
         fogTexture.Apply();
+        fogDirty = false;
     }
 
     private void ApplyFogTextureToRenderer()
@@ -77,10 +86,24 @@ public class FogOfWarManager : MonoBehaviour
 
         for (int i = 0; i < currentPixels.Length; i++)
         {
-            currentPixels[i] = new Color(0f, 0f, 0f, 0.6f);
+            if (currentPixels[i] != hiddenFogColor)
+            {
+                currentPixels[i] = hiddenFogColor;
+                fogDirty = true;
+            }
         }
 
         var emitters = VisionManager.Instance.GetEmittersForTeam(localTeamId);
+        if (emitters == null || emitters.Count == 0)
+        {
+            if (!fogDirty)
+                return;
+
+            fogTexture.SetPixels(currentPixels);
+            fogTexture.Apply();
+            fogDirty = false;
+            return;
+        }
 
         foreach (var emitter in emitters)
         {
@@ -89,8 +112,12 @@ public class FogOfWarManager : MonoBehaviour
             RevealVisionAtWorldPosition(emitter.transform.position, emitter.VisionRadius);
         }
 
+        if (!fogDirty)
+            return;
+
         fogTexture.SetPixels(currentPixels);
         fogTexture.Apply();
+        fogDirty = false;
     }
 
     private bool WorldToFogPixel(Vector3 worldPosition, out int px, out int py)
@@ -142,7 +169,11 @@ public class FogOfWarManager : MonoBehaviour
                     int index = y * textureWidth + x;
 
                     exploredPixels[index] = true;
-                    currentPixels[index] = new Color(0f, 0f, 0f, 0f);
+                    if (currentPixels[index] != visibleFogColor)
+                    {
+                        currentPixels[index] = visibleFogColor;
+                        fogDirty = true;
+                    }
                 }
             }
         }
