@@ -278,9 +278,22 @@ public class Unit : MonoBehaviour
         IsSelected = selected;
 
         if (IsSelected)
+        {
             unitRenderer.material.color = Color.green;
+        }
         else
-            unitRenderer.material.color = originalColor;
+        {
+            TeamColorApplier colorApplier = GetComponent<TeamColorApplier>();
+
+            if (colorApplier != null)
+            {
+                colorApplier.ApplyColor();
+            }
+            else
+            {
+                unitRenderer.material.color = originalColor;
+            }
+        }
     }
 
     public void MoveTo(Vector3 destination)
