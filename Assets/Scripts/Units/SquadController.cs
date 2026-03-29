@@ -9,10 +9,14 @@ public class SquadController : MonoBehaviour
     [SerializeField] private int visualMemberCount = 5;
 
     private readonly List<Transform> squadVisuals = new List<Transform>();
+    private readonly List<GameObject> visualPool = new List<GameObject>();
+    private readonly List<GameObject> activeVisuals = new List<GameObject>();
 
     public bool UseSquadSystem => useSquadSystem;
     public int VisualMemberCount => visualMemberCount;
     public IReadOnlyList<Transform> SquadVisuals => squadVisuals;
+    public IReadOnlyList<GameObject> VisualPool => visualPool;
+    public IReadOnlyList<GameObject> ActiveVisuals => activeVisuals;
 
     private void Awake()
     {
@@ -24,11 +28,16 @@ public class SquadController : MonoBehaviour
     {
         if (!useSquadSystem) return;
 
-        SpawnVisualMembers();
+        CreateVisualPool();
+        ActivateVisualMembers();
     }
 
-    private void SpawnVisualMembers()
+    private void CreateVisualPool()
     {
+        visualPool.Clear();
+        activeVisuals.Clear();
+        squadVisuals.Clear();
+
         for (int i = 0; i < visualMemberCount; i++)
         {
             GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -63,6 +72,25 @@ public class SquadController : MonoBehaviour
 
             visual.transform.localPosition = new Vector3(offsetX, 0f, offsetZ);
 
+            visual.SetActive(false);
+            visualPool.Add(visual);
+        }
+    }
+
+    private void ActivateVisualMembers()
+    {
+        activeVisuals.Clear();
+        squadVisuals.Clear();
+
+        int count = Mathf.Min(visualMemberCount, visualPool.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject visual = visualPool[i];
+            if (visual == null) continue;
+
+            visual.SetActive(true);
+            activeVisuals.Add(visual);
             RegisterVisual(visual.transform);
         }
     }
