@@ -17,6 +17,7 @@ public class SquadController : MonoBehaviour
     private readonly List<Transform> squadVisuals = new List<Transform>();
     private readonly List<GameObject> visualPool = new List<GameObject>();
     private readonly List<GameObject> activeVisuals = new List<GameObject>();
+    private readonly List<GameObject> aliveVisuals = new List<GameObject>();
 
     public bool UseSquadSystem => useSquadSystem;
     public int VisualMemberCount => visualMemberCount;
@@ -114,6 +115,7 @@ public class SquadController : MonoBehaviour
     {
         activeVisuals.Clear();
         squadVisuals.Clear();
+        aliveVisuals.Clear();
 
         int count = Mathf.Min(visualMemberCount, visualPool.Count);
 
@@ -124,6 +126,7 @@ public class SquadController : MonoBehaviour
 
             visual.SetActive(true);
             activeVisuals.Add(visual);
+            aliveVisuals.Add(visual);
             RegisterVisual(visual.transform);
         }
     }
@@ -148,27 +151,67 @@ public class SquadController : MonoBehaviour
         }
 
         activeVisuals.Clear();
+        aliveVisuals.Clear();
         squadVisuals.Clear();
     }
 
     private void UpdateActiveVisualCount(int targetCount)
     {
-        activeVisuals.Clear();
-        squadVisuals.Clear();
+        targetCount = Mathf.Clamp(targetCount, 1, visualMemberCount);
 
+        while (aliveVisuals.Count > targetCount)
+        {
+            RemoveOneVisualMember();
+        }
+
+        while (aliveVisuals.Count < targetCount)
+        {
+            RestoreOneVisualMember();
+        }
+
+        RefreshActiveVisualLists();
+    }
+
+    private void RemoveOneVisualMember()
+    {
+        if (aliveVisuals.Count <= 1)
+            return;
+
+        int randomIndex = Random.Range(0, aliveVisuals.Count);
+        GameObject visualToRemove = aliveVisuals[randomIndex];
+        if (visualToRemove == null)
+            return;
+
+        visualToRemove.SetActive(false);
+        aliveVisuals.RemoveAt(randomIndex);
+    }
+
+    private void RestoreOneVisualMember()
+    {
         for (int i = 0; i < visualPool.Count; i++)
         {
             GameObject visual = visualPool[i];
             if (visual == null) continue;
+            if (aliveVisuals.Contains(visual)) continue;
 
-            bool shouldBeActive = i < targetCount;
-            visual.SetActive(shouldBeActive);
+            visual.SetActive(true);
+            aliveVisuals.Add(visual);
+            return;
+        }
+    }
 
-            if (shouldBeActive)
-            {
-                activeVisuals.Add(visual);
-                RegisterVisual(visual.transform);
-            }
+    private void RefreshActiveVisualLists()
+    {
+        activeVisuals.Clear();
+        squadVisuals.Clear();
+
+        for (int i = 0; i < aliveVisuals.Count; i++)
+        {
+            GameObject visual = aliveVisuals[i];
+            if (visual == null) continue;
+
+            activeVisuals.Add(visual);
+            RegisterVisual(visual.transform);
         }
     }
 
