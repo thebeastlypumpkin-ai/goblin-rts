@@ -8,14 +8,16 @@ public class HealthBarUI : MonoBehaviour
 
     private Unit unit;
     private Camera cam;
+    private TeamMember teamMember;
 
     public void Bind(Unit target)
     {
         unit = target;
-        if (unit == null)
+        teamMember = unit.GetComponent<TeamMember>();
+
+        if (teamMember == null)
         {
-            Destroy(gameObject);
-            return;
+            teamMember = unit.GetComponentInParent<TeamMember>();
         }
 
         cam = Camera.main;
@@ -32,6 +34,13 @@ public class HealthBarUI : MonoBehaviour
         if (fillImage == null) return;
 
         fillImage.fillAmount = Mathf.Clamp01(normalized);
+
+        if (teamMember != null && TeamColorManager.Instance != null)
+        {
+            int localTeamId = (int)Team.Team1;
+            int unitTeamId = (int)teamMember.Team;
+            fillImage.color = TeamColorManager.Instance.GetColor(unitTeamId, localTeamId);
+        }
 
         // Always keep object active for now
         if (!gameObject.activeSelf)
