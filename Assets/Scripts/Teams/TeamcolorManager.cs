@@ -25,6 +25,12 @@ public class TeamColorManager : MonoBehaviour
         if (teamId == (int)Team.Neutral)
             return neutralColor;
 
+        if (SpectatorManager.Instance != null && SpectatorManager.Instance.IsSpectator)
+        {
+            // In spectator mode: show all teams as neutral for now
+            return neutralColor;
+        }
+
         if (teamId == localTeamId)
             return friendlyColor;
 
