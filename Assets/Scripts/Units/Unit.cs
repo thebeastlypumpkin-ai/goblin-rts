@@ -30,6 +30,18 @@ public class Unit : MonoBehaviour
     public float HealthNormalized => (maxHealth <= 0f) ? 0f : (currentHealth / maxHealth);
     public int SupplyCost => supplyCost;
     public UnitDefinition UnitDefinition => unitDefinition;
+    public Unit CurrentTarget => currentTarget;
+
+    public bool IsInAttackRange
+    {
+        get
+        {
+            if (currentTarget == null) return false;
+
+            float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
+            return distance <= attackRange;
+        }
+    }
 
     // UI / systems can subscribe to these
     public event Action<float> OnHealthChanged; // sends HealthNormalized (0..1)

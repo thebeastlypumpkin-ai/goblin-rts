@@ -13,11 +13,16 @@ public class SquadController : MonoBehaviour
     [SerializeField] private float spacingZ = 0.9f;
     [Header("Health Sync")]
     [SerializeField] private bool useSharedHealthPool = true;
+    [Header("Attack Sync")]
+    [SerializeField] private bool useAttackSync = true;
+    [SerializeField] private float attackPushDistance = 0.35f;
 
     private readonly List<Transform> squadVisuals = new List<Transform>();
     private readonly List<GameObject> visualPool = new List<GameObject>();
     private readonly List<GameObject> activeVisuals = new List<GameObject>();
     private readonly List<GameObject> aliveVisuals = new List<GameObject>();
+    private readonly List<Vector3> cachedFormationOffsets = new List<Vector3>();
+    private Vector3 currentAttackLocalDirection = Vector3.zero;
 
     public bool UseSquadSystem => useSquadSystem;
     public int VisualMemberCount => visualMemberCount;
@@ -48,6 +53,35 @@ public class SquadController : MonoBehaviour
         ActivateVisualMembers();
     }
 
+    private void Update()
+    {
+        if (!useSquadSystem) return;
+        if (!useAttackSync) return;
+        if (unit == null) return;
+
+        if (unit.CurrentTarget == null)
+        {
+            currentAttackLocalDirection = Vector3.zero;
+            ResetVisualPositions();
+            return;
+        }
+
+        SyncAttackFacing();
+
+        if (unit.IsInAttackRange)
+        {
+            Vector3 localTargetPosition = transform.InverseTransformPoint(unit.CurrentTarget.transform.position);
+            currentAttackLocalDirection = new Vector3(localTargetPosition.x, 0f, localTargetPosition.z).normalized;
+
+            ApplyAttackStance();
+        }
+        else
+        {
+            currentAttackLocalDirection = Vector3.zero;
+            ResetVisualPositions();
+        }
+    }
+
     private void OnEnable()
     {
         if (unit == null)
@@ -74,6 +108,8 @@ public class SquadController : MonoBehaviour
         visualPool.Clear();
         activeVisuals.Clear();
         squadVisuals.Clear();
+        aliveVisuals.Clear();
+        cachedFormationOffsets.Clear();
 
         for (int i = 0; i < visualMemberCount; i++)
         {
@@ -104,6 +140,7 @@ public class SquadController : MonoBehaviour
             visual.transform.SetParent(transform);
 
             Vector3 formationOffset = GetFormationOffset(i);
+            cachedFormationOffsets.Add(formationOffset);
             visual.transform.localPosition = formationOffset;
 
             visual.SetActive(false);
@@ -215,6 +252,77 @@ public class SquadController : MonoBehaviour
         }
     }
 
+    private int GetVisualPoolIndex(GameObject visual)
+    {
+        if (visual == null)
+            return -1;
+
+        return visualPool.IndexOf(visual);
+    }
+
+    private void SyncAttackFacing()
+    {
+        if (unit.CurrentTarget == null)
+            return;
+
+        Vector3 targetPosition = unit.CurrentTarget.transform.position;
+
+        for (int i = 0; i < activeVisuals.Count; i++)
+        {
+            GameObject visual = activeVisuals[i];
+            if (visual == null) continue;
+
+            Vector3 direction = targetPosition - visual.transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                visual.transform.rotation = Quaternion.LookRotation(direction);
+            }
+        }
+    }
+
+    private void ApplyAttackStance()
+    {
+        for (int i = 0; i < activeVisuals.Count; i++)
+        {
+            GameObject visual = activeVisuals[i];
+            if (visual == null) continue;
+
+            int poolIndex = GetVisualPoolIndex(visual);
+            if (poolIndex < 0 || poolIndex >= cachedFormationOffsets.Count) continue;
+
+            Vector3 baseOffset = cachedFormationOffsets[poolIndex];
+            Vector3 targetOffset = baseOffset + (currentAttackLocalDirection * 0.75f);
+
+            visual.transform.localPosition = Vector3.Lerp(
+                visual.transform.localPosition,
+                targetOffset,
+                Time.deltaTime * 10f
+            );
+        }
+    }
+
+    private void ResetVisualPositions()
+    {
+        for (int i = 0; i < activeVisuals.Count; i++)
+        {
+            GameObject visual = activeVisuals[i];
+            if (visual == null) continue;
+
+            int poolIndex = GetVisualPoolIndex(visual);
+            if (poolIndex < 0 || poolIndex >= cachedFormationOffsets.Count) continue;
+
+            Vector3 baseOffset = cachedFormationOffsets[poolIndex];
+
+            visual.transform.localPosition = Vector3.Lerp(
+                visual.transform.localPosition,
+                baseOffset,
+                Time.deltaTime * 10f
+            );
+        }
+    }
+
     private Vector3 GetFormationOffset(int index)
     {
         if (visualMemberCount <= 1)
@@ -228,7 +336,6 @@ public class SquadController : MonoBehaviour
         float x = Mathf.Cos(angle * Mathf.Deg2Rad) * ringRadius;
         float z = Mathf.Sin(angle * Mathf.Deg2Rad) * ringRadius;
 
-        // small goblin-style messiness
         float jitterX = Random.Range(-0.35f, 0.35f);
         float jitterZ = Random.Range(-0.35f, 0.35f);
 
