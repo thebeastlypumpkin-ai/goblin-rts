@@ -23,6 +23,14 @@ public class VisionEmitter : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (VisionManager.Instance != null)
+        {
+            VisionManager.Instance.RegisterEmitter(this);
+        }
+    }
+
     private void OnDisable()
     {
         if (VisionManager.Instance != null)

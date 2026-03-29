@@ -24,6 +24,8 @@ public class VisionManager : MonoBehaviour
 
     public void RegisterEmitter(VisionEmitter emitter)
     {
+        if (emitter == null) return;
+
         if (!activeEmitters.Contains(emitter))
         {
             activeEmitters.Add(emitter);
@@ -70,4 +72,5 @@ public class VisionManager : MonoBehaviour
 
         return new List<VisionEmitter>();
     }
+
 }
