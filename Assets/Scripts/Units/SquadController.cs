@@ -11,6 +11,8 @@ public class SquadController : MonoBehaviour
     [Header("Formation Settings")]
     [SerializeField] private float spacingX = 0.9f;
     [SerializeField] private float spacingZ = 0.9f;
+    [Header("Health Sync")]
+    [SerializeField] private bool useSharedHealthPool = true;
 
     private readonly List<Transform> squadVisuals = new List<Transform>();
     private readonly List<GameObject> visualPool = new List<GameObject>();
@@ -21,6 +23,8 @@ public class SquadController : MonoBehaviour
     public IReadOnlyList<Transform> SquadVisuals => squadVisuals;
     public IReadOnlyList<GameObject> VisualPool => visualPool;
     public IReadOnlyList<GameObject> ActiveVisuals => activeVisuals;
+    public bool UseSharedHealthPool => useSharedHealthPool;
+    public Unit RootUnit => unit;
 
     private void Awake()
     {
@@ -41,6 +45,27 @@ public class SquadController : MonoBehaviour
 
         CreateVisualPool();
         ActivateVisualMembers();
+    }
+
+    private void OnEnable()
+    {
+        if (unit == null)
+            unit = GetComponent<Unit>();
+
+        if (unit != null)
+        {
+            unit.OnHealthChanged += HandleRootHealthChanged;
+            unit.OnDied += HandleRootDied;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (unit != null)
+        {
+            unit.OnHealthChanged -= HandleRootHealthChanged;
+            unit.OnDied -= HandleRootDied;
+        }
     }
 
     private void CreateVisualPool()
@@ -100,6 +125,50 @@ public class SquadController : MonoBehaviour
             visual.SetActive(true);
             activeVisuals.Add(visual);
             RegisterVisual(visual.transform);
+        }
+    }
+
+    private void HandleRootHealthChanged(float normalized)
+    {
+        if (!useSharedHealthPool)
+            return;
+
+        int targetVisibleCount = Mathf.CeilToInt(normalized * visualMemberCount);
+        targetVisibleCount = Mathf.Clamp(targetVisibleCount, 1, visualMemberCount);
+
+        UpdateActiveVisualCount(targetVisibleCount);
+    }
+
+    private void HandleRootDied(Unit deadUnit)
+    {
+        foreach (GameObject visual in activeVisuals)
+        {
+            if (visual != null)
+                visual.SetActive(false);
+        }
+
+        activeVisuals.Clear();
+        squadVisuals.Clear();
+    }
+
+    private void UpdateActiveVisualCount(int targetCount)
+    {
+        activeVisuals.Clear();
+        squadVisuals.Clear();
+
+        for (int i = 0; i < visualPool.Count; i++)
+        {
+            GameObject visual = visualPool[i];
+            if (visual == null) continue;
+
+            bool shouldBeActive = i < targetCount;
+            visual.SetActive(shouldBeActive);
+
+            if (shouldBeActive)
+            {
+                activeVisuals.Add(visual);
+                RegisterVisual(visual.transform);
+            }
         }
     }
 
