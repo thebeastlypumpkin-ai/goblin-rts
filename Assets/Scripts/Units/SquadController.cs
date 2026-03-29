@@ -8,6 +8,9 @@ public class SquadController : MonoBehaviour
     [SerializeField] private bool useSquadSystem = true;
     [SerializeField] private int visualMemberCount = 5;
     private Unit unit;
+    [Header("Formation Settings")]
+    [SerializeField] private float spacingX = 0.9f;
+    [SerializeField] private float spacingZ = 0.9f;
 
     private readonly List<Transform> squadVisuals = new List<Transform>();
     private readonly List<GameObject> visualPool = new List<GameObject>();
@@ -74,11 +77,8 @@ public class SquadController : MonoBehaviour
             // Parent to unit
             visual.transform.SetParent(transform);
 
-            // Random small offset (temporary, will fix later)
-            float offsetX = Random.Range(-1f, 1f);
-            float offsetZ = Random.Range(-1f, 1f);
-
-            visual.transform.localPosition = new Vector3(offsetX, 0f, offsetZ);
+            Vector3 formationOffset = GetFormationOffset(i);
+            visual.transform.localPosition = formationOffset;
 
             visual.SetActive(false);
             visualPool.Add(visual);
@@ -101,6 +101,26 @@ public class SquadController : MonoBehaviour
             activeVisuals.Add(visual);
             RegisterVisual(visual.transform);
         }
+    }
+
+    private Vector3 GetFormationOffset(int index)
+    {
+        if (visualMemberCount <= 1)
+            return new Vector3(0f, 1f, 0f);
+
+        float angleStep = 360f / visualMemberCount;
+        float angle = angleStep * index;
+
+        float ringRadius = 1.5f;
+
+        float x = Mathf.Cos(angle * Mathf.Deg2Rad) * ringRadius;
+        float z = Mathf.Sin(angle * Mathf.Deg2Rad) * ringRadius;
+
+        // small goblin-style messiness
+        float jitterX = Random.Range(-0.35f, 0.35f);
+        float jitterZ = Random.Range(-0.35f, 0.35f);
+
+        return new Vector3(x + jitterX, 1f, z + jitterZ);
     }
 
     public void RegisterVisual(Transform visual)
