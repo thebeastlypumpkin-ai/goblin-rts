@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
   - component: {fileID: 6274217512316579638}
+  - component: {fileID: 6849746764463373714}
+  - component: {fileID: 8765619410986125962}
   m_Layer: 8
   m_Name: BeastPen_Complete_test
   m_TagString: Untagged
@@ -156,6 +158,31 @@ MonoBehaviour:
   teamId: 0
   availableUnits:
   - {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
+--- !u!114 &6849746764463373714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827c4a538f401094ca3739ac9e1d495e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMember
+  team: 1
+--- !u!114 &8765619410986125962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c1407ae10ffed4eaad3a688599a0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamColorApplier
 --- !u!1 &8482235911658948088
 GameObject:
   m_ObjectHideFlags: 0

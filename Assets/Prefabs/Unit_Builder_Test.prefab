@@ -17,6 +17,10 @@ GameObject:
   - component: {fileID: 7645404455520928979}
   - component: {fileID: -7287245343802143015}
   - component: {fileID: 3713214142284185096}
+  - component: {fileID: 4207375142417000230}
+  - component: {fileID: 6284051087763232372}
+  - component: {fileID: 2451866033401278363}
+  - component: {fileID: 5299261423161153027}
   m_Layer: 6
   m_Name: Unit_Builder_Test
   m_TagString: Untagged
@@ -135,6 +139,7 @@ MonoBehaviour:
   attackRange: 1.5
   attacksPerSecond: 1
   detectionRange: 8
+  unitDefinition: {fileID: 0}
   scanInterval: 0.25
   manualAttackLeashRange: 25
   moveArrivalThreshold: 0.5
@@ -187,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5969acb43f6e68c46bba915423eceb8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Builder
-  buildRange: 2
+  buildRange: 25
   isBuilding: 0
 --- !u!114 &3713214142284185096
 MonoBehaviour:
@@ -201,3 +206,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64eb5234f890e884d9210145e46457e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuilderTestDriver
+--- !u!114 &4207375142417000230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64eb5234f890e884d9210145e46457e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuilderTestDriver
+--- !u!114 &6284051087763232372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5586cc638860b7b4f930dce821c6a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionEmitter
+  visionRadius: 8
+  teamId: 1
+--- !u!114 &2451866033401278363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02fbf2f58c3a0b346adba1a6d7ecc4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionValidationTester
+  emitter: {fileID: 6284051087763232372}
+--- !u!114 &5299261423161153027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c1407ae10ffed4eaad3a688599a0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamColorApplier

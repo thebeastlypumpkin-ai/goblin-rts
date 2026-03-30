@@ -15,6 +15,12 @@ GameObject:
   - component: {fileID: 5592037909460932624}
   - component: {fileID: 6471886332449725482}
   - component: {fileID: 7645404455520928979}
+  - component: {fileID: 5745578156093403291}
+  - component: {fileID: 3248605365454589770}
+  - component: {fileID: 2012711017269823951}
+  - component: {fileID: 2637507671720490886}
+  - component: {fileID: 3924231976867489601}
+  - component: {fileID: -2354943728006258017}
   m_Layer: 6
   m_Name: Unit_Test
   m_TagString: Untagged
@@ -128,10 +134,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   maxHealth: 100
+  supplyCost: 1
   attackDamage: 10
   attackRange: 1.5
   attacksPerSecond: 1
   detectionRange: 8
+  unitDefinition: {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
   scanInterval: 0.25
   manualAttackLeashRange: 25
   moveArrivalThreshold: 0.5
@@ -172,3 +180,100 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamMember
   team: 1
+--- !u!54 &5745578156093403291
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &3248605365454589770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5586cc638860b7b4f930dce821c6a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionEmitter
+  visionRadius: 8
+  teamId: 1
+--- !u!114 &2012711017269823951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02fbf2f58c3a0b346adba1a6d7ecc4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionValidationTester
+  emitter: {fileID: 3248605365454589770}
+--- !u!114 &2637507671720490886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c1407ae10ffed4eaad3a688599a0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamColorApplier
+--- !u!114 &3924231976867489601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57976518b064b304688c9d7ab9964106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadController
+  useSquadSystem: 1
+  visualMemberCount: 5
+  spacingX: 0.9
+  spacingZ: 0.9
+  useSharedHealthPool: 1
+  useAttackSync: 1
+  attackPushDistance: 1
+--- !u!114 &-2354943728006258017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6861561267032273382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b99f0e82fc2b04894fe93ed24134cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadAoEHandler
