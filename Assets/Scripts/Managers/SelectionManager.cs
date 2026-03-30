@@ -16,6 +16,7 @@ public class SelectionManager : MonoBehaviour
     private List<Unit> selectedUnits = new List<Unit>();
     private Building selectedBuilding;
     public Building SelectedBuilding => selectedBuilding;
+    [SerializeField] private SelectedUnitPanelUI selectedUnitPanelUI;
 
     private void PruneSelection()
     {
@@ -59,6 +60,9 @@ public class SelectionManager : MonoBehaviour
             if (u != null) u.SetSelected(false);
 
         selectedUnits.Clear();
+
+        if (selectedUnitPanelUI != null)
+            selectedUnitPanelUI.Hide();
     }
 
     void HandleSelectionClick()
@@ -111,6 +115,14 @@ public class SelectionManager : MonoBehaviour
             selectedUnits.Add(unit);
             unit.SetSelected(true);
             Debug.Log("Added to selection: " + unit.name);
+        }
+
+        if (selectedUnitPanelUI != null)
+        {
+            if (selectedUnits.Count == 1)
+                selectedUnitPanelUI.ShowUnit(selectedUnits[0]);
+            else
+                selectedUnitPanelUI.Hide();
         }
     }
 
@@ -190,6 +202,9 @@ public class SelectionManager : MonoBehaviour
         selectedUnits.Add(unit);
         unit.SetSelected(true);
         Debug.Log("Selected: " + unit.name);
+
+        if (selectedUnitPanelUI != null)
+            selectedUnitPanelUI.ShowUnit(unit);
     }
 
     public void AddUnitToSelection(Unit unit)
