@@ -2532,6 +2532,30 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+--- !u!1 &1933261673 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3306360672069366256, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
+  m_PrefabInstance: {fileID: 44524813706382688}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1933261686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933261673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57976518b064b304688c9d7ab9964106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadController
+  useSquadSystem: 1
+  visualMemberCount: 5
+  spacingX: 0.9
+  spacingZ: 0.9
+  useSharedHealthPool: 1
+  useAttackSync: 1
+  attackPushDistance: 0.35
 --- !u!1 &2020770957
 GameObject:
   m_ObjectHideFlags: 0
@@ -2812,7 +2836,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3306360672069366256, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1933261686}
   m_SourcePrefab: {fileID: 100100000, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
 --- !u!1001 &4499955082658752182
 PrefabInstance:

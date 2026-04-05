@@ -32,6 +32,16 @@ public class SquadController : MonoBehaviour
     public bool UseSharedHealthPool => useSharedHealthPool;
     public Unit RootUnit => unit;
 
+    public bool IsCombatEngaged
+    {
+        get
+        {
+            if (unit == null) return false;
+            if (unit.CurrentTarget == null) return false;
+            return !unit.CurrentTarget.IsDead;
+        }
+    }
+
     private void Awake()
     {
         unit = GetComponent<Unit>();
@@ -363,5 +373,34 @@ public class SquadController : MonoBehaviour
     public void ClearVisuals()
     {
         squadVisuals.Clear();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (unit == null)
+            unit = GetComponent<Unit>();
+
+        if (unit == null) return;
+
+        // Combat state color
+        Gizmos.color = IsCombatEngaged ? Color.red : Color.green;
+
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * 0.25f, 1.2f);
+
+        // Draw line to target
+        if (unit.CurrentTarget != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, unit.CurrentTarget.transform.position);
+        }
+
+        // Draw visual members
+        Gizmos.color = Color.cyan;
+
+        for (int i = 0; i < cachedFormationOffsets.Count; i++)
+        {
+            Vector3 worldPos = transform.TransformPoint(cachedFormationOffsets[i]);
+            Gizmos.DrawWireSphere(worldPos, 0.15f);
+        }
     }
 }
