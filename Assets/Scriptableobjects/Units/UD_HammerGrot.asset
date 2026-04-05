@@ -20,3 +20,4 @@ MonoBehaviour:
   supplyCost: 2
   icon: {fileID: 0}
   visualSquadSize: 8
+  primaryTag: 1

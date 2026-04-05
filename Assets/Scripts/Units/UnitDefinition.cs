@@ -26,4 +26,7 @@ public class UnitDefinition : ScriptableObject
 
     [Header("Squad Settings")]
     public int visualSquadSize = 5;
+
+    [Header("Tags")]
+    public UnitTag primaryTag = UnitTag.None;
 }

@@ -31,6 +31,7 @@ public class Unit : MonoBehaviour
     public int SupplyCost => supplyCost;
     public UnitDefinition UnitDefinition => unitDefinition;
     public Unit CurrentTarget => currentTarget;
+    public UnitTag PrimaryTag => (unitDefinition != null) ? unitDefinition.primaryTag : UnitTag.None;
 
     public bool IsInAttackRange
     {
