@@ -51,4 +51,9 @@ public class UnitDefinition : ScriptableObject
 
         return 1f;
     }
+
+    [Header("Status Effect")]
+    public StatusEffectType statusEffectType = StatusEffectType.None;
+    public float statusDuration = 0f;
+    public float statusStrength = 0f;
 }

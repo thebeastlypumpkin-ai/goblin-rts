@@ -24,6 +24,10 @@ public class Unit : MonoBehaviour
     [SerializeField] private float detectionRange = 8f;
     [Header("Data")]
     [SerializeField] private UnitDefinition unitDefinition;
+    [Header("Status Runtime")]
+    [SerializeField] private StatusEffectType activeStatusEffect = StatusEffectType.None;
+    [SerializeField] private float activeStatusTimer = 0f;
+    [SerializeField] private float activeStatusStrength = 0f;
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
@@ -165,9 +169,42 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public void ApplyStatusEffect(StatusEffectType newEffect, float duration, float strength)
+    {
+        if (newEffect == StatusEffectType.None)
+            return;
+
+        // Rule 1: different status types replace the old one
+        if (activeStatusEffect != newEffect)
+        {
+            activeStatusEffect = newEffect;
+            activeStatusTimer = duration;
+            activeStatusStrength = strength;
+            return;
+        }
+
+        // Rule 2: same status type refreshes duration to the higher value
+        activeStatusTimer = Mathf.Max(activeStatusTimer, duration);
+
+        // Rule 3: same status type keeps the strongest version
+        activeStatusStrength = Mathf.Max(activeStatusStrength, strength);
+    }
+
     void Update()
     {
         if (isDead) return;
+
+        if (activeStatusEffect != StatusEffectType.None)
+        {
+            activeStatusTimer -= Time.deltaTime;
+
+            if (activeStatusTimer <= 0f)
+            {
+                activeStatusEffect = StatusEffectType.None;
+                activeStatusTimer = 0f;
+                activeStatusStrength = 0f;
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.X) && IsSelected)
         {
