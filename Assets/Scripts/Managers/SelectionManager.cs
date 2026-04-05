@@ -148,15 +148,11 @@ public class SelectionManager : MonoBehaviour
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // Right-click unit = attack
         if (Physics.Raycast(ray, out RaycastHit unitHit, 1000f, unitLayerMask))
         {
             Unit targetUnit = unitHit.collider.GetComponentInParent<Unit>();
             if (targetUnit != null && !targetUnit.IsDead)
             {
-                foreach (var u in selectedUnits)
-                    if (u != null && u != targetUnit && !u.IsDead)
-                        u.CommandAttack(targetUnit);
                 int acceptedCount = 0;
 
                 foreach (var u in selectedUnits)
@@ -166,8 +162,10 @@ public class SelectionManager : MonoBehaviour
                 }
 
                 Debug.Log($"Attack Target: {targetUnit.name} (accepted by {acceptedCount}/{selectedUnits.Count})");
+                return;
             }
         }
+
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
         {
             for (int i = 0; i < selectedUnits.Count; i++)

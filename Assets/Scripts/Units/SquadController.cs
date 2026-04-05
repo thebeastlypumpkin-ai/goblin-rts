@@ -29,6 +29,7 @@ public class SquadController : MonoBehaviour
     public IReadOnlyList<Transform> SquadVisuals => squadVisuals;
     public IReadOnlyList<GameObject> VisualPool => visualPool;
     public IReadOnlyList<GameObject> ActiveVisuals => activeVisuals;
+    public int ActiveVisualCount => aliveVisuals.Count;
     public bool UseSharedHealthPool => useSharedHealthPool;
     public Unit RootUnit => unit;
 
@@ -382,8 +383,13 @@ public class SquadController : MonoBehaviour
 
         if (unit == null) return;
 
-        // Combat state color
-        Gizmos.color = IsCombatEngaged ? Color.red : Color.green;
+        // Stress-state color
+        if (ActiveVisualCount <= 1)
+            Gizmos.color = Color.magenta;
+        else if (IsCombatEngaged)
+            Gizmos.color = Color.red;
+        else
+            Gizmos.color = Color.green;
 
         Gizmos.DrawWireSphere(transform.position + Vector3.up * 0.25f, 1.2f);
 
