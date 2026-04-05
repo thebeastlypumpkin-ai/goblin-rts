@@ -10,7 +10,7 @@ public class Unit : MonoBehaviour
     public static List<Unit> ActiveUnits = new List<Unit>();
 
     [Header("Health")]
-    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxHealth = 200f;
     private float currentHealth;
 
     [Header("Supply")]

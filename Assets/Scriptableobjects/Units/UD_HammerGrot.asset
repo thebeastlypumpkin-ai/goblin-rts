@@ -27,6 +27,6 @@ MonoBehaviour:
   statusEffectType: 0
   statusDuration: 0
   statusStrength: 0
-  usesAoEAttack: 1
-  aoeRadius: 2
-  aoeDamageMultiplier: 0.5
+  usesAoEAttack: 0
+  aoeRadius: 0
+  aoeDamageMultiplier: 1

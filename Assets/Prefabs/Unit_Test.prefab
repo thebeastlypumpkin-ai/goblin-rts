@@ -133,13 +133,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444ce99851ab4014baadab19a8a51036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
-  maxHealth: 100
+  maxHealth: 200
   supplyCost: 1
   attackDamage: 10
   attackRange: 1.5
   attacksPerSecond: 1
   detectionRange: 8
   unitDefinition: {fileID: 11400000, guid: 5f2f7fe13a5476b468a8c3bca254b0ce, type: 2}
+  activeStatusEffect: 0
+  activeStatusTimer: 0
+  activeStatusStrength: 0
   scanInterval: 0.25
   manualAttackLeashRange: 25
   moveArrivalThreshold: 0.5
