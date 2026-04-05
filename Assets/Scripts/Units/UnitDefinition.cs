@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "RTS/Unit Definition")]
 public class UnitDefinition : ScriptableObject
@@ -29,4 +30,25 @@ public class UnitDefinition : ScriptableObject
 
     [Header("Tags")]
     public UnitTag primaryTag = UnitTag.None;
+
+    [System.Serializable]
+    public struct TagMultiplier
+    {
+        public UnitTag targetTag;
+        public float multiplier;
+    }
+
+    [Header("Combat Multipliers")]
+    public List<TagMultiplier> damageMultipliers = new List<TagMultiplier>();
+
+    public float GetDamageMultiplier(UnitTag targetTag)
+    {
+        for (int i = 0; i < damageMultipliers.Count; i++)
+        {
+            if (damageMultipliers[i].targetTag == targetTag)
+                return damageMultipliers[i].multiplier;
+        }
+
+        return 1f;
+    }
 }

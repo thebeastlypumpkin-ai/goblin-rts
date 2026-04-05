@@ -21,3 +21,6 @@ MonoBehaviour:
   icon: {fileID: 0}
   visualSquadSize: 8
   primaryTag: 1
+  damageMultipliers:
+  - targetTag: 3
+    multiplier: 1.5

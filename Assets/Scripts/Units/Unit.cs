@@ -270,7 +270,8 @@ public class Unit : MonoBehaviour
         if (Time.time >= nextAttackTime)
         {
             nextAttackTime = Time.time + attackCooldown;
-            currentTarget.TakeDamage(attackDamage, this);
+            float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
+            currentTarget.TakeDamage(finalDamage, this);
         }
     }
 
@@ -489,5 +490,16 @@ public class Unit : MonoBehaviour
             Destroy(healthBarInstance);
 
         Destroy(gameObject);
+    }
+
+    public float GetDamageMultiplierAgainst(Unit target)
+    {
+        if (target == null)
+            return 1f;
+
+        if (unitDefinition == null)
+            return 1f;
+
+        return unitDefinition.GetDamageMultiplier(target.PrimaryTag);
     }
 }
