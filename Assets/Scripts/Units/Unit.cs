@@ -54,6 +54,11 @@ public class Unit : MonoBehaviour
     // UI / systems can subscribe to these
     public event Action<float> OnHealthChanged; // sends HealthNormalized (0..1)
     public event Action<Unit> OnDied;
+    public event Action<Unit> OnAttackStarted;
+    public event Action<Unit, Unit, float> OnAttackLanded;
+    public event Action<Unit, float, Unit> OnDamageTaken;
+    public event Action<Unit, Unit> OnUnitKilled;
+    public event Action<Unit, StatusEffectType, float, float> OnStatusApplied;
 
     public bool IsSelected { get; private set; }
     public bool IsDead => isDead;
@@ -183,6 +188,7 @@ public class Unit : MonoBehaviour
             activeStatusEffect = newEffect;
             activeStatusTimer = duration;
             activeStatusStrength = strength;
+            OnStatusApplied?.Invoke(this, activeStatusEffect, activeStatusTimer, activeStatusStrength);
             return;
         }
 
@@ -191,6 +197,8 @@ public class Unit : MonoBehaviour
 
         // Rule 3: same status type keeps the strongest version
         activeStatusStrength = Mathf.Max(activeStatusStrength, strength);
+
+        OnStatusApplied?.Invoke(this, activeStatusEffect, activeStatusTimer, activeStatusStrength);
     }
 
     private void ApplyAoEDamage(Unit primaryTarget, float primaryDamage)
@@ -343,6 +351,7 @@ public class Unit : MonoBehaviour
             nextAttackTime = Time.time + attackCooldown;
             float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
             currentTarget.TakeDamage(finalDamage, this);
+            OnAttackLanded?.Invoke(this, currentTarget, finalDamage);
             ApplyAoEDamage(currentTarget, finalDamage);
         }
     }
@@ -441,6 +450,11 @@ public class Unit : MonoBehaviour
 
         bool accepted = SetTarget(target);
 
+        if (accepted)
+        {
+            OnAttackStarted?.Invoke(target);
+        }
+
         if (!accepted)
         {
             TeamMember myTeam = GetComponent<TeamMember>();
@@ -493,6 +507,7 @@ public class Unit : MonoBehaviour
         }
 
         currentHealth -= amount;
+        OnDamageTaken?.Invoke(this, amount, attacker);
         OnHealthChanged?.Invoke(HealthNormalized);
 
         Debug.Log(name + " took " + amount + " damage. Current HP: " + currentHealth);
@@ -537,7 +552,13 @@ public class Unit : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return;   // Prevent double execution
+        if (isDead) return;
+
+        if (currentTarget != null)
+        {
+            currentTarget.OnUnitKilled?.Invoke(currentTarget, this);
+        }
+        
         isDead = true;
         OnDied?.Invoke(this);
 
