@@ -51,6 +51,17 @@ public class SquadController : MonoBehaviour
 
         CreateVisualPool();
         ActivateVisualMembers();
+
+        if (unit == null)
+            unit = GetComponent<Unit>();
+
+        if (unit != null)
+        {
+            unit.OnHealthChanged += HandleRootHealthChanged;
+            unit.OnDied += HandleRootDied;
+
+            HandleRootHealthChanged(unit.HealthNormalized);
+        }
     }
 
     private void Update()
@@ -84,14 +95,6 @@ public class SquadController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (unit == null)
-            unit = GetComponent<Unit>();
-
-        if (unit != null)
-        {
-            unit.OnHealthChanged += HandleRootHealthChanged;
-            unit.OnDied += HandleRootDied;
-        }
     }
 
     private void OnDisable()

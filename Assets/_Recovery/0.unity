@@ -2822,10 +2822,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3924231976867489601, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
-      propertyPath: useSquadSystem
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6861561267032273382, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
       propertyPath: m_Name
       value: Unit_Test

@@ -2809,6 +2809,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_Target
       objectReference: {fileID: 0}
+    - target: {fileID: 3306360672069366256, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2822,6 +2826,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2354943728006258017, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2012711017269823951, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2637507671720490886, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3248605365454589770, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3924231976867489601, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3924231976867489601, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
       propertyPath: useSquadSystem
       value: 1
@@ -2869,6 +2893,10 @@ PrefabInstance:
     - target: {fileID: 6969000551815050402, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7645404455520928979, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
