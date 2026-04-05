@@ -56,4 +56,9 @@ public class UnitDefinition : ScriptableObject
     public StatusEffectType statusEffectType = StatusEffectType.None;
     public float statusDuration = 0f;
     public float statusStrength = 0f;
+
+    [Header("AoE Damage")]
+    public bool usesAoEAttack = false;
+    public float aoeRadius = 0f;
+    public float aoeDamageMultiplier = 1f;
 }

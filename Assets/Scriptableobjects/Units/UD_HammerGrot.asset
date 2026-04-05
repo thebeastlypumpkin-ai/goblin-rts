@@ -24,3 +24,9 @@ MonoBehaviour:
   damageMultipliers:
   - targetTag: 3
     multiplier: 1.5
+  statusEffectType: 0
+  statusDuration: 0
+  statusStrength: 0
+  usesAoEAttack: 1
+  aoeRadius: 2
+  aoeDamageMultiplier: 0.5

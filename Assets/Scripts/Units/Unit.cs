@@ -36,6 +36,9 @@ public class Unit : MonoBehaviour
     public UnitDefinition UnitDefinition => unitDefinition;
     public Unit CurrentTarget => currentTarget;
     public UnitTag PrimaryTag => (unitDefinition != null) ? unitDefinition.primaryTag : UnitTag.None;
+    public bool UsesAoEAttack => unitDefinition != null && unitDefinition.usesAoEAttack;
+    public float AoERadius => unitDefinition != null ? unitDefinition.aoeRadius : 0f;
+    public float AoEDamageMultiplier => unitDefinition != null ? unitDefinition.aoeDamageMultiplier : 1f;
 
     public bool IsInAttackRange
     {
@@ -190,6 +193,37 @@ public class Unit : MonoBehaviour
         activeStatusStrength = Mathf.Max(activeStatusStrength, strength);
     }
 
+    private void ApplyAoEDamage(Unit primaryTarget, float primaryDamage)
+    {
+        if (!UsesAoEAttack)
+            return;
+
+        if (AoERadius <= 0f)
+            return;
+
+        float splashDamage = primaryDamage * AoEDamageMultiplier;
+
+        Collider[] hits = Physics.OverlapSphere(primaryTarget.transform.position, AoERadius);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Unit nearbyUnit = hits[i].GetComponentInParent<Unit>();
+
+            if (nearbyUnit == null) continue;
+            if (nearbyUnit == this) continue;
+            if (nearbyUnit == primaryTarget) continue;
+            if (nearbyUnit.IsDead) continue;
+
+            TeamMember myTeam = GetComponent<TeamMember>();
+            TeamMember otherTeam = nearbyUnit.GetComponent<TeamMember>();
+
+            if (myTeam != null && otherTeam != null && !myTeam.IsEnemy(otherTeam))
+                continue;
+
+            nearbyUnit.TakeDamage(splashDamage, this);
+        }
+    }
+
     void Update()
     {
         if (isDead) return;
@@ -309,6 +343,7 @@ public class Unit : MonoBehaviour
             nextAttackTime = Time.time + attackCooldown;
             float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
             currentTarget.TakeDamage(finalDamage, this);
+            ApplyAoEDamage(currentTarget, finalDamage);
         }
     }
 
