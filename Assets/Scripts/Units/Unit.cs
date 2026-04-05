@@ -19,9 +19,11 @@ public class Unit : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] private float attackDamage = 10f;
-    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private float attackRange = 2.5f;
     [SerializeField] private float attacksPerSecond = 1f;
     [SerializeField] private float detectionRange = 8f;
+    [SerializeField] private float combatAnchorLeashRange = 3f;
+    [SerializeField] private float blockedCombatWaitDistance = 4f;
     [Header("Data")]
     [SerializeField] private UnitDefinition unitDefinition;
     [Header("Status Runtime")]
@@ -82,6 +84,8 @@ public class Unit : MonoBehaviour
     private Vector3 patrolPointB;
     private bool patrolToB = true;
     private bool isPatrolling = false;
+    private Vector3 combatAnchorPosition;
+    private bool hasCombatAnchor = false;
 
     [Header("UI")]
     [SerializeField] private GameObject healthBarPrefab;
@@ -232,6 +236,80 @@ public class Unit : MonoBehaviour
         }
     }
 
+    private Unit FindClosestEnemyInRadius(float radius)
+    {
+        Unit closest = null;
+        float closestSqrDist = float.MaxValue;
+        float radiusSqr = radius * radius;
+
+        foreach (Unit u in ActiveUnits)
+        {
+            if (u == null || u == this) continue;
+            if (u.IsDead) continue;
+
+            if (teamMember != null)
+            {
+                TeamMember otherTeam = u.GetComponent<TeamMember>();
+                if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+                    continue;
+            }
+
+            float sqrDist = (u.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist > radiusSqr) continue;
+
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closest = u;
+            }
+        }
+
+        return closest;
+    }
+
+    private bool IsFriendlyUnitBlockingTarget(Unit target)
+    {
+        if (target == null || teamMember == null)
+            return false;
+
+        Vector3 toTarget = target.transform.position - transform.position;
+        float distanceToTarget = toTarget.magnitude;
+
+        if (distanceToTarget <= attackRange)
+            return false;
+
+        Vector3 directionToTarget = toTarget.normalized;
+
+        foreach (Unit u in ActiveUnits)
+        {
+            if (u == null || u == this || u == target) continue;
+            if (u.IsDead) continue;
+
+            TeamMember otherTeam = u.GetComponent<TeamMember>();
+            if (otherTeam == null) continue;
+            if (teamMember.IsEnemy(otherTeam)) continue;
+
+            Vector3 toFriendly = u.transform.position - transform.position;
+            float friendlyDistance = toFriendly.magnitude;
+
+            if (friendlyDistance >= distanceToTarget)
+                continue;
+
+            Vector3 friendlyDirection = toFriendly.normalized;
+            float alignment = Vector3.Dot(directionToTarget, friendlyDirection);
+
+            if (alignment < 0.8f)
+                continue;
+
+            float lateralOffset = Vector3.Cross(directionToTarget, toFriendly).magnitude;
+
+            if (lateralOffset <= 1.0f)
+                return true;
+        }
+
+        return false;
+    }
+
     void Update()
     {
         if (isDead) return;
@@ -335,7 +413,37 @@ public class Unit : MonoBehaviour
 
         if (distance > attackRange)
         {
-            // Chase into range
+            if (hasCombatAnchor && !hasManualAttackOrder)
+            {
+                float anchorDistance = Vector3.Distance(transform.position, combatAnchorPosition);
+                if (anchorDistance > combatAnchorLeashRange)
+                {
+                    if (agent != null)
+                    {
+                        agent.isStopped = true;
+                        agent.velocity = Vector3.zero;
+                    }
+
+                    return;
+                }
+            }
+
+            if (IsFriendlyUnitBlockingTarget(currentTarget) && distance <= blockedCombatWaitDistance)
+            {
+                if (agent != null)
+                {
+                    agent.isStopped = true;
+                    agent.velocity = Vector3.zero;
+                }
+
+                return;
+            }
+
+            if (agent != null)
+            {
+                agent.stoppingDistance = attackRange;
+            }
+
             MoveTo(currentTarget.transform.position);
             return;
         }
@@ -417,6 +525,7 @@ public class Unit : MonoBehaviour
         // clear combat
         currentTarget = null;
         hasManualAttackOrder = false;
+        hasCombatAnchor = false;
         hasMoveOrder = false;
     }
 
@@ -426,12 +535,18 @@ public class Unit : MonoBehaviour
         currentCommand = CommandType.Move;
 
         hasManualAttackOrder = false;
+        hasCombatAnchor = false;
 
         hasMoveOrder = true;
         moveOrderDestination = destination;
 
         ignoreAggroUntilTime = float.PositiveInfinity; // ignore aggro until we arrive
         ClearTarget();
+
+        if (agent != null)
+        {
+            agent.stoppingDistance = 0.1f;
+        }
 
         MoveTo(destination);
     }
@@ -447,6 +562,9 @@ public class Unit : MonoBehaviour
 
         ignoreAggroUntilTime = 0f;
         hasManualAttackOrder = true;
+
+        combatAnchorPosition = transform.position;
+        hasCombatAnchor = true;
 
         bool accepted = SetTarget(target);
 
@@ -489,6 +607,7 @@ public class Unit : MonoBehaviour
     public void ClearTarget()
     {
         currentTarget = null;
+        hasCombatAnchor = false;
     }
 
     public void TakeDamage(float amount, Unit attacker)
