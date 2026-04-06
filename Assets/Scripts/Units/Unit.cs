@@ -105,6 +105,126 @@ public class Unit : MonoBehaviour
         Patrol
     }
 
+    private void OnEnable()
+    {
+        if (GameTickSystem.Instance != null)
+            GameTickSystem.Instance.OnTick += HandleTick;
+    }
+
+    private void OnDisable()
+    {
+        if (GameTickSystem.Instance != null)
+            GameTickSystem.Instance.OnTick -= HandleTick;
+    }
+
+    private void HandleTick()
+    {
+        // Periodic enemy scan
+        if (Time.time >= nextScanTime && Time.time >= ignoreAggroUntilTime)
+        {
+            nextScanTime = Time.time + scanInterval;
+
+            if (currentTarget == null)
+            {
+                Unit found = FindClosestEnemyInRange();
+                if (found != null)
+                    currentTarget = found;
+            }
+        }
+
+        if (currentTarget == null)
+            return;
+
+        if (currentTarget.IsDead)
+        {
+            hasManualAttackOrder = false;
+            ClearTarget();
+            return;
+        }
+
+        // Enemy validation
+        if (teamMember != null)
+        {
+            TeamMember otherTeam = currentTarget.teamMember;
+            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+            {
+                hasManualAttackOrder = false;
+                ClearTarget();
+                return;
+            }
+        }
+
+        float leash = hasManualAttackOrder ? manualAttackLeashRange : detectionRange;
+
+        float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
+        if (sqrDist > leash * leash)
+        {
+            hasManualAttackOrder = false;
+            ClearTarget();
+            return;
+        }
+
+        float sqrDistToTarget = (currentTarget.transform.position - transform.position).sqrMagnitude;
+        float attackRangeSqr = attackRange * attackRange;
+
+        if (sqrDistToTarget > attackRangeSqr)
+        {
+            if (hasCombatAnchor && !hasManualAttackOrder)
+            {
+                float anchorSqr = (combatAnchorPosition - transform.position).sqrMagnitude;
+                float leashSqr = combatAnchorLeashRange * combatAnchorLeashRange;
+
+                if (anchorSqr > leashSqr)
+                {
+                    if (agent != null)
+                    {
+                        agent.isStopped = true;
+                        agent.velocity = Vector3.zero;
+                    }
+
+                    return;
+                }
+            }
+
+            float blockedWaitDistanceSqr = blockedCombatWaitDistance * blockedCombatWaitDistance;
+
+            if (IsFriendlyUnitBlockingTarget(currentTarget) && sqrDistToTarget <= blockedWaitDistanceSqr)
+            {
+                if (agent != null)
+                {
+                    agent.isStopped = true;
+                    agent.velocity = Vector3.zero;
+                }
+
+                return;
+            }
+
+            if (agent != null)
+                agent.stoppingDistance = attackRange;
+
+            MoveTo(currentTarget.transform.position);
+            return;
+        }
+
+        if (agent != null)
+            agent.isStopped = true;
+
+        float attackCooldown = 1f / attacksPerSecond;
+
+        if (Time.time >= nextAttackTime)
+        {
+            nextAttackTime = Time.time + attackCooldown;
+
+            float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
+
+            currentTarget.TakeDamage(finalDamage, this);
+
+            OnAttackLanded?.Invoke(this, currentTarget, finalDamage);
+
+            ApplyAoEDamage(currentTarget, finalDamage);
+        }
+    }
+
     public void CommandPatrol(Vector3 pointA, Vector3 pointB)
     {
         currentCommand = CommandType.Patrol;
@@ -226,8 +346,8 @@ public class Unit : MonoBehaviour
             if (nearbyUnit == primaryTarget) continue;
             if (nearbyUnit.IsDead) continue;
 
-            TeamMember myTeam = GetComponent<TeamMember>();
-            TeamMember otherTeam = nearbyUnit.GetComponent<TeamMember>();
+            TeamMember myTeam = teamMember;
+            TeamMember otherTeam = nearbyUnit.teamMember;
 
             if (myTeam != null && otherTeam != null && !myTeam.IsEnemy(otherTeam))
                 continue;
@@ -249,7 +369,7 @@ public class Unit : MonoBehaviour
 
             if (teamMember != null)
             {
-                TeamMember otherTeam = u.GetComponent<TeamMember>();
+                TeamMember otherTeam = u.teamMember;
                 if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
                     continue;
             }
@@ -285,7 +405,7 @@ public class Unit : MonoBehaviour
             if (u == null || u == this || u == target) continue;
             if (u.IsDead) continue;
 
-            TeamMember otherTeam = u.GetComponent<TeamMember>();
+            TeamMember otherTeam = u.teamMember;
             if (otherTeam == null) continue;
             if (teamMember.IsEnemy(otherTeam)) continue;
 
@@ -362,106 +482,6 @@ public class Unit : MonoBehaviour
             }
         }
 
-        // Periodic enemy scan
-        if (Time.time >= nextScanTime && Time.time >= ignoreAggroUntilTime)
-        {
-            nextScanTime = Time.time + scanInterval;
-
-            if (currentTarget == null)
-            {
-                Unit found = FindClosestEnemyInRange();
-                if (found != null)
-                    currentTarget = found;
-            }
-        }
-
-        if (currentTarget == null)
-            return;
-
-        if (currentTarget.IsDead)
-        {
-            hasManualAttackOrder = false;
-            ClearTarget();
-            return;
-        }
-
-        // Safety: if target is not an enemy, drop it
-        if (teamMember != null)
-        {
-            TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
-            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
-            {
-                hasManualAttackOrder = false;
-                ClearTarget();
-                return;
-            }
-        }
-
-        // If target wandered too far away, drop it (manual orders get a bigger leash)
-        float leash = hasManualAttackOrder ? manualAttackLeashRange : detectionRange;
-
-        float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
-        if (sqrDist > leash * leash)
-        {
-            hasManualAttackOrder = false;
-            ClearTarget();
-            return;
-        }
-
-        // Check distance
-        float distance = Vector3.Distance(transform.position, currentTarget.transform.position);
-
-        if (distance > attackRange)
-        {
-            if (hasCombatAnchor && !hasManualAttackOrder)
-            {
-                float anchorDistance = Vector3.Distance(transform.position, combatAnchorPosition);
-                if (anchorDistance > combatAnchorLeashRange)
-                {
-                    if (agent != null)
-                    {
-                        agent.isStopped = true;
-                        agent.velocity = Vector3.zero;
-                    }
-
-                    return;
-                }
-            }
-
-            if (IsFriendlyUnitBlockingTarget(currentTarget) && distance <= blockedCombatWaitDistance)
-            {
-                if (agent != null)
-                {
-                    agent.isStopped = true;
-                    agent.velocity = Vector3.zero;
-                }
-
-                return;
-            }
-
-            if (agent != null)
-            {
-                agent.stoppingDistance = attackRange;
-            }
-
-            MoveTo(currentTarget.transform.position);
-            return;
-        }
-
-        // In range: stop moving and attack on cooldown
-        if (agent != null)
-            agent.isStopped = true;
-
-        float attackCooldown = 1f / attacksPerSecond;
-
-        if (Time.time >= nextAttackTime)
-        {
-            nextAttackTime = Time.time + attackCooldown;
-            float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
-            currentTarget.TakeDamage(finalDamage, this);
-            OnAttackLanded?.Invoke(this, currentTarget, finalDamage);
-            ApplyAoEDamage(currentTarget, finalDamage);
-        }
     }
 
     public void CommandHold()
@@ -575,8 +595,8 @@ public class Unit : MonoBehaviour
 
         if (!accepted)
         {
-            TeamMember myTeam = GetComponent<TeamMember>();
-            TeamMember tTeam = target.GetComponent<TeamMember>();
+            TeamMember myTeam = teamMember;
+            TeamMember tTeam = target.teamMember;
             Debug.LogWarning($"{name} refused target {target.name}. MyTeam={(myTeam ? myTeam.Team.ToString() : "NONE")} TargetTeam={(tTeam ? tTeam.Team.ToString() : "NONE")}");
         }
 
@@ -590,7 +610,7 @@ public class Unit : MonoBehaviour
 
         if (teamMember != null)
         {
-            TeamMember otherTeam = target.GetComponent<TeamMember>();
+            TeamMember otherTeam = target.teamMember;
 
             // If either is missing a TeamMember, we will NOT allow targeting (forces consistent setup)
             if (otherTeam == null)
@@ -618,8 +638,8 @@ public class Unit : MonoBehaviour
         // Friendly-fire prevention (damage-layer failsafe)
         if (attacker != null && attacker != this)
         {
-            TeamMember attackerTeam = attacker.GetComponent<TeamMember>();
-            TeamMember myTeam = GetComponent<TeamMember>();
+            TeamMember attackerTeam = attacker.teamMember;
+            TeamMember myTeam = teamMember;
 
             if (attackerTeam != null && myTeam != null && !myTeam.IsEnemy(attackerTeam))
                 return;
@@ -651,7 +671,7 @@ public class Unit : MonoBehaviour
             // Team filtering (only enemies)
             if (teamMember != null)
             {
-                TeamMember otherTeam = u.GetComponent<TeamMember>();
+                TeamMember otherTeam = u.teamMember;
                 if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
                     continue;
             }
