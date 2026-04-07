@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using GoblinRTS.Economy;
 
@@ -18,13 +19,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameConfig config;
     public GameConfig Config => config;
 
-    public EssenceWallet Essence { get; private set; }
-
     [SerializeField] private int startingEssence = 0;
+
+    private Dictionary<int, EssenceWallet> teamEssenceWallets = new Dictionary<int, EssenceWallet>();
 
     private void Awake()
     {
-        // Enforce singleton
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning("[GameManager] Duplicate detected -> destroying this one.");
@@ -34,9 +34,6 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        Essence = new EssenceWallet(startingEssence);
-        Essence.OnChanged += v => Debug.Log($"[Economy] Essence = {v}");
 
         if (config == null)
         {
@@ -53,7 +50,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // Temporary debug hotkey: P toggles pause.
         if (Input.GetKeyDown(KeyCode.P))
         {
             TogglePause();
@@ -67,7 +63,6 @@ public class GameManager : MonoBehaviour
         var oldState = CurrentState;
         CurrentState = newState;
 
-        // Minimal pause behavior
         Time.timeScale = (CurrentState == GameState.Paused) ? 0f : 1f;
 
         Debug.Log($"[GameManager] State: {oldState} -> {CurrentState}");
@@ -76,5 +71,38 @@ public class GameManager : MonoBehaviour
     public void TogglePause()
     {
         SetState(CurrentState == GameState.Paused ? GameState.InGame : GameState.Paused);
+    }
+
+    public EssenceWallet GetTeamEssenceWallet(int teamId)
+    {
+        if (!teamEssenceWallets.ContainsKey(teamId))
+        {
+            EssenceWallet newWallet = new EssenceWallet(startingEssence);
+            int capturedTeamId = teamId;
+
+            newWallet.OnChanged += value =>
+                Debug.Log($"[Economy] Team {capturedTeamId} Essence = {value}");
+
+            teamEssenceWallets.Add(teamId, newWallet);
+
+            Debug.Log($"[Economy] Created essence wallet for Team {teamId} with starting amount {startingEssence}");
+        }
+
+        return teamEssenceWallets[teamId];
+    }
+
+    public int GetTeamEssence(int teamId)
+    {
+        return GetTeamEssenceWallet(teamId).Current;
+    }
+
+    public void AddTeamEssence(int teamId, int amount)
+    {
+        GetTeamEssenceWallet(teamId).Add(amount);
+    }
+
+    public bool TrySpendTeamEssence(int teamId, int amount)
+    {
+        return GetTeamEssenceWallet(teamId).TrySpend(amount);
     }
 }

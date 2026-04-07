@@ -51,9 +51,9 @@ public class FissureNode : MonoBehaviour
             {
                 incomeTimer = 0f;
 
-                if (GameManager.Instance != null && GameManager.Instance.Essence != null)
+                if (GameManager.Instance != null && ownerTeam >= 0)
                 {
-                    GameManager.Instance.Essence.Add(essencePerTick);
+                    GameManager.Instance.AddTeamEssence(ownerTeam, essencePerTick);
                     Debug.Log($"{gameObject.name} generated {essencePerTick} Essence for Team {ownerTeam}");
                 }
             }

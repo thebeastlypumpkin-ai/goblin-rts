@@ -102,15 +102,15 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
-        if (GameManager.Instance == null || GameManager.Instance.Essence == null)
+        if (GameManager.Instance == null)
         {
-            Debug.LogError("BuildingPlacementSystem: no Essence wallet found on GameManager.");
+            Debug.LogError("BuildingPlacementSystem: GameManager missing.");
             return;
         }
 
-        if (!GameManager.Instance.Essence.TrySpend(selectedDefinition.cost))
+        if (!GameManager.Instance.TrySpendTeamEssence(0, selectedDefinition.cost))
         {
-            Debug.Log($"Not enough Essence to place {selectedDefinition.buildingName}. Cost: {selectedDefinition.cost}, Current: {GameManager.Instance.Essence.Current}");
+            Debug.Log($"Not enough Essence to place {selectedDefinition.buildingName}. Cost: {selectedDefinition.cost}, Current: {GameManager.Instance.GetTeamEssence(0)}");
             return;
         }
 

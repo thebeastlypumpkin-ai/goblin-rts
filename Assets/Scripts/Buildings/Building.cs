@@ -211,7 +211,7 @@ public class Building : MonoBehaviour
         if (fortressIncomeTimer >= tickInterval)
         {
             fortressIncomeTimer = 0f;
-            GameManager.Instance.Essence.Add(fortressBaselineIncomePerTick);
+            GameManager.Instance.AddTeamEssence(teamId, fortressBaselineIncomePerTick);
         }
     }
 
@@ -231,7 +231,7 @@ public class Building : MonoBehaviour
         if (genericIncomeTimer >= tickInterval)
         {
             genericIncomeTimer = 0f;
-            GameManager.Instance.Essence.Add(incomePerTick);
+            GameManager.Instance.AddTeamEssence(teamId, incomePerTick);
         }
     }
 

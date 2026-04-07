@@ -82,16 +82,16 @@ public class ProductionQueue : MonoBehaviour
             return;
         }
 
-        if (!GameManager.Instance.Essence.TrySpend(unit.essenceCost))
+        if (!GameManager.Instance.TrySpendTeamEssence(teamId, unit.essenceCost))
         {
-            Debug.Log($"Not enough Essence to queue: {unit.unitName}");
+            Debug.Log($"Not enough Essence for Team {teamId} to queue: {unit.unitName}");
             return;
         }
 
         if (!SupplyManager.Instance.TryConsumeSupply(unit.supplyCost))
         {
             Debug.Log($"Not enough Supply to queue: {unit.unitName}");
-            GameManager.Instance.Essence.Add(unit.essenceCost);
+            GameManager.Instance.AddTeamEssence(teamId, unit.essenceCost);
             return;
         }
 
@@ -133,7 +133,7 @@ public class ProductionQueue : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.Essence.Add(unit.essenceCost);
+            GameManager.Instance.AddTeamEssence(teamId, unit.essenceCost);
         }
 
         if (SupplyManager.Instance != null)

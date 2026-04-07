@@ -1326,6 +1326,7 @@ GameObject:
   - component: {fileID: 434647247}
   - component: {fileID: 434647246}
   - component: {fileID: 434647248}
+  - component: {fileID: 434647249}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1377,6 +1378,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoblinRTS.Economy.SupplyManager
   currentSupplyUsed: 0
   maxSupply: 0
+--- !u!114 &434647249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434647245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28edcb7ab704d5142a2ea535fddfc967, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameTickSystem
+  tickRate: 0.2
 --- !u!1001 &464517726
 PrefabInstance:
   m_ObjectHideFlags: 0

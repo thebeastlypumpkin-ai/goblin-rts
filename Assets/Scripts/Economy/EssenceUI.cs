@@ -7,29 +7,19 @@ namespace GoblinRTS.Economy
     {
         [SerializeField] private TextMeshProUGUI essenceText;
 
-        private void Start()
+        private void Update()
         {
-            if (GameManager.Instance == null || GameManager.Instance.Essence == null)
+            if (essenceText == null)
                 return;
 
-            // Subscribe to wallet changes
-            GameManager.Instance.Essence.OnChanged += UpdateText;
-
-            // Initialize immediately
-            UpdateText(GameManager.Instance.Essence.Current);
-        }
-
-        private void OnDestroy()
-        {
-            if (GameManager.Instance == null || GameManager.Instance.Essence == null)
+            if (GameManager.Instance == null)
+            {
+                essenceText.text = "Essence: 0";
                 return;
+            }
 
-            GameManager.Instance.Essence.OnChanged -= UpdateText;
-        }
-
-        private void UpdateText(int value)
-        {
-            essenceText.text = $"Essence: {value}";
+            int currentEssence = GameManager.Instance.GetTeamEssence(0);
+            essenceText.text = $"Essence: {currentEssence}";
         }
     }
 }

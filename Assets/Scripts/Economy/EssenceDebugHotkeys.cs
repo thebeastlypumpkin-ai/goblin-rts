@@ -6,15 +6,19 @@ namespace GoblinRTS.Economy
     {
         private void Update()
         {
-            if (GameManager.Instance == null || GameManager.Instance.Essence == null) return;
+            if (GameManager.Instance == null) return;
 
-            // Press "=" to add (shift makes it "+", but KeyCode is still Equals)
+            // Press "=" to add 10 Essence to Team 0
             if (Input.GetKeyDown(KeyCode.Equals))
-                GameManager.Instance.Essence.Add(10);
+            {
+                GameManager.Instance.AddTeamEssence(0, 10);
+            }
 
-            // Press "-" to spend
+            // Press "-" to spend 5 Essence from Team 0
             if (Input.GetKeyDown(KeyCode.Minus))
-                GameManager.Instance.Essence.TrySpend(5);
+            {
+                GameManager.Instance.TrySpendTeamEssence(0, 5);
+            }
         }
     }
 }
