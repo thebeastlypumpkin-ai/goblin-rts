@@ -45,6 +45,8 @@ GameObject:
   - component: {fileID: 7030321241344846852}
   - component: {fileID: 7820026527836629111}
   - component: {fileID: 4151953586639009522}
+  - component: {fileID: -6219050892851017580}
+  - component: {fileID: -8086158426205695428}
   m_Layer: 8
   m_Name: Fortress_T0
   m_TagString: Untagged
@@ -187,3 +189,28 @@ MonoBehaviour:
   teamId: 0
   availableUnits:
   - {fileID: 11400000, guid: 9e0468453ea78244f9ae37b5fe86f91c, type: 2}
+--- !u!114 &-6219050892851017580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4267676454847277768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827c4a538f401094ca3739ac9e1d495e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMember
+  team: -1
+--- !u!114 &-8086158426205695428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4267676454847277768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c1407ae10ffed4eaad3a688599a0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamColorApplier

@@ -101,6 +101,17 @@ public class Building : MonoBehaviour
         {
             Debug.Log("Research Building active: ready to unlock upgrades.");
         }
+
+        TeamMember tm = GetComponent<TeamMember>();
+        if (tm != null)
+        {
+            tm.SetTeam(teamId);
+            Debug.Log($"{name} TeamMember set to {tm.Team} from building teamId {teamId}");
+        }
+        else
+        {
+            Debug.LogWarning($"{name} is missing TeamMember in Init.");
+        }
     }
 
     public void UpgradeBuilding()
@@ -268,5 +279,6 @@ public class Building : MonoBehaviour
             default:
                 return 60;
         }
+
     }
 }

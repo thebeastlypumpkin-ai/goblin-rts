@@ -1,6 +1,6 @@
 public enum Team
 {
-    Neutral = 0,
-    Team1 = 1,
-    Team2 = 2
+    Neutral = -1,
+    Team0 = 0,
+    Team1 = 1
 }

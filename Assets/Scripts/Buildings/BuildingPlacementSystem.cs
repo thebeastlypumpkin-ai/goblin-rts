@@ -9,6 +9,7 @@ public class BuildingPlacementSystem : MonoBehaviour
     [SerializeField] private BuildSite buildSitePrefab;
     [SerializeField] private Builder builder;
 
+    private Builder activeBuilder;
     private BuildingDefinition selectedDefinition;
     private GameObject ghost;
 
@@ -47,6 +48,25 @@ public class BuildingPlacementSystem : MonoBehaviour
     public void StartPlacing(BuildingDefinition def)
     {
         selectedDefinition = def;
+
+        var selectedUnits = SelectionManager.Instance.GetSelectedUnits();
+
+        if (selectedUnits.Count == 0)
+        {
+            Debug.LogError("BuildingPlacementSystem: no unit selected when starting placement.");
+            selectedDefinition = null;
+            return;
+        }
+
+        activeBuilder = selectedUnits[0].GetComponent<Builder>();
+
+        if (activeBuilder == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: selected unit is not a builder.");
+            selectedDefinition = null;
+            return;
+        }
+
         CreateGhost();
     }
 
@@ -114,22 +134,24 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
-        if (builder == null)
+        if (activeBuilder == null)
         {
-            Debug.LogError("BuildingPlacementSystem: builder reference is missing.");
+            Debug.LogError("BuildingPlacementSystem: activeBuilder is missing.");
             return;
         }
 
-        TeamMember builderTeam = builder.GetComponent<TeamMember>();
+        TeamMember builderTeam = activeBuilder.GetComponent<TeamMember>();
         if (builderTeam == null)
         {
-            Debug.LogError("BuildingPlacementSystem: builder is missing TeamMember.");
+            Debug.LogError("BuildingPlacementSystem: selected builder is missing TeamMember.");
             return;
         }
 
         int teamId = (int)builderTeam.Team;
         var buildSite = Instantiate(buildSitePrefab, point, Quaternion.identity);
         buildSite.Init(selectedDefinition, teamId);
+
+        activeBuilder.BeginBuild(buildSite);
 
         Debug.Log($"Placed BuildSite for {selectedDefinition.buildingName} at {point}");
 

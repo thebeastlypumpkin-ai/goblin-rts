@@ -6,6 +6,11 @@ public class TeamMember : MonoBehaviour
 
     public Team Team => team;
 
+    public void SetTeam(int newTeam)
+    {
+        team = (Team)newTeam;
+    }
+
     public bool IsEnemy(TeamMember other)
     {
         if (other == null)

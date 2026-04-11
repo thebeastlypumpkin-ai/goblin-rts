@@ -21,7 +21,13 @@ public class ProductionQueue : MonoBehaviour
     void Awake()
     {
         building = GetComponent<Building>();
+
+        if (building != null)
+        {
+            teamId = building.TeamId;
+        }
     }
+
 
     void Update()
     {
@@ -215,10 +221,15 @@ public class ProductionQueue : MonoBehaviour
         TeamMember tm = spawnedObject.GetComponent<TeamMember>();
         if (tm != null)
         {
-            // team assignment will be handled by prefab default for now
+            tm.SetTeam(building.TeamId);
         }
 
-        Building building = GetComponent<Building>();
+        TeamColorApplier colorApplier = spawnedObject.GetComponent<TeamColorApplier>();
+        if (colorApplier != null)
+        {
+            colorApplier.ApplyColor();
+        }
+
         Unit spawnedUnit = spawnedObject.GetComponent<Unit>();
 
         if (building != null && spawnedUnit != null && building.HasRallyPoint)
@@ -240,6 +251,6 @@ public class ProductionQueue : MonoBehaviour
 
         }
 
-        Debug.Log($"Spawned unit: {unit.unitName} for team {teamId}");
+        Debug.Log($"Spawned unit: {unit.unitName} for team {building.TeamId}");
     }
 }
