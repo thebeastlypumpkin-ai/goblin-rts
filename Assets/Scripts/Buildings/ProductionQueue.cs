@@ -36,24 +36,6 @@ public class ProductionQueue : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            if (availableUnits.Count > 0)
-            {
-                EnqueueUnit(availableUnits[0]);
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            CancelCurrentProduction();
-        }
-
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            CancelLastQueuedUnit();
-        }
-
         ProcessQueue();
     }
 
