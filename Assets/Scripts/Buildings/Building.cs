@@ -121,6 +121,40 @@ public class Building : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (definition == null)
+            return;
+
+        if (maxHealth > 0f)
+            return;
+
+        maxHealth = definition.maxHealth;
+        currentHealth = maxHealth;
+
+        enablePassiveRepair = definition.enablePassiveRepair;
+        passiveRepairDelay = definition.passiveRepairDelay;
+        passiveRepairPerSecond = definition.passiveRepairPerSecond;
+
+        isFortress = definition.isFortress;
+        fortressBaselineIncomePerTick = definition.fortressBaselineIncomePerTick;
+        incomePerTick = definition.incomePerTick;
+
+        currentTier = (definition != null) ? definition.startingTier : 1;
+
+        lastDamageTime = Time.time;
+        spawnTime = Time.time;
+
+        fortressIncomeTimer = 0f;
+        genericIncomeTimer = 0f;
+
+        TeamMember tm = GetComponent<TeamMember>();
+        if (tm != null)
+        {
+            tm.SetTeam(teamId);
+        }
+    }
+
     public void UpgradeBuilding()
     {
         if (!SupportsTierUpgrades)

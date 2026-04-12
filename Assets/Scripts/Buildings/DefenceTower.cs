@@ -51,8 +51,11 @@ public class DefenseTower : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Unit unit = other.GetComponent<Unit>();
+        Unit unit = other.GetComponentInParent<Unit>();
         if (unit == null)
+            return;
+
+        if (unit.IsDead)
             return;
 
         TeamMember otherTeam = unit.GetComponent<TeamMember>();
@@ -71,13 +74,18 @@ public class DefenseTower : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Unit unit = other.GetComponent<Unit>();
+        Unit unit = other.GetComponentInParent<Unit>();
         if (unit == null)
             return;
 
         if (unitsInRange.Remove(unit))
         {
             Debug.Log($"{name} enemy left range: {unit.name}");
+        }
+
+        if (currentTarget == unit)
+        {
+            currentTarget = null;
         }
     }
 
@@ -93,7 +101,7 @@ public class DefenseTower : MonoBehaviour
     {
         for (int i = unitsInRange.Count - 1; i >= 0; i--)
         {
-            if (unitsInRange[i] == null)
+            if (unitsInRange[i] == null || unitsInRange[i].IsDead)
             {
                 unitsInRange.RemoveAt(i);
             }
@@ -116,15 +124,41 @@ public class DefenseTower : MonoBehaviour
         if (unitsInRange.Count == 0)
             return;
 
-        currentTarget = unitsInRange[0];
+        Unit closest = null;
+        float closestSqrDist = float.MaxValue;
 
-        Debug.Log($"{name} targeting {currentTarget.name}");
+        for (int i = 0; i < unitsInRange.Count; i++)
+        {
+            Unit unit = unitsInRange[i];
+            if (unit == null || unit.IsDead)
+                continue;
+
+            float sqrDist = (unit.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closest = unit;
+            }
+        }
+
+        currentTarget = closest;
+
+        if (currentTarget != null)
+        {
+            Debug.Log($"{name} targeting {currentTarget.name}");
+        }
     }
 
     private void HandleAttack()
     {
         if (currentTarget == null)
             return;
+
+        if (currentTarget.IsDead)
+        {
+            currentTarget = null;
+            return;
+        }
 
         attackTimer += Time.deltaTime;
 

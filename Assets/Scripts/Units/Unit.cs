@@ -778,6 +778,9 @@ public class Unit : MonoBehaviour
             if (col == null || !col.enabled)
                 continue;
 
+            if (col.isTrigger)
+                continue;
+
             Vector3 point = col.ClosestPoint(transform.position);
             float sqrDist = (point - transform.position).sqrMagnitude;
 

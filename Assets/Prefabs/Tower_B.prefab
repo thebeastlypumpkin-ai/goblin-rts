@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a65246f25f10d944938fd21017e0058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  definition: {fileID: 0}
+  definition: {fileID: 11400000, guid: aeeaaf48c17876549b98063e47eb45bf, type: 2}
   teamId: 0
   maxHealth: 0
   currentHealth: 0
