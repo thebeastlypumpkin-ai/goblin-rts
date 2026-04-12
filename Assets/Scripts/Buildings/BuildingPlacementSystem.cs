@@ -47,26 +47,44 @@ public class BuildingPlacementSystem : MonoBehaviour
 
     public void StartPlacing(BuildingDefinition def)
     {
-        selectedDefinition = def;
+        if (def == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: StartPlacing called with null BuildingDefinition.");
+            selectedDefinition = null;
+            activeBuilder = null;
+            return;
+        }
+
+        if (SelectionManager.Instance == null)
+        {
+            Debug.LogError("BuildingPlacementSystem: SelectionManager instance is missing.");
+            selectedDefinition = null;
+            activeBuilder = null;
+            return;
+        }
 
         var selectedUnits = SelectionManager.Instance.GetSelectedUnits();
 
-        if (selectedUnits.Count == 0)
+        if (selectedUnits == null || selectedUnits.Count == 0)
         {
-            Debug.LogError("BuildingPlacementSystem: no unit selected when starting placement.");
+            Debug.LogWarning("BuildingPlacementSystem: no unit selected when starting placement.");
             selectedDefinition = null;
+            activeBuilder = null;
             return;
         }
 
-        activeBuilder = selectedUnits[0].GetComponent<Builder>();
+        Builder foundBuilder = selectedUnits[0].GetComponent<Builder>();
 
-        if (activeBuilder == null)
+        if (foundBuilder == null)
         {
-            Debug.LogError("BuildingPlacementSystem: selected unit is not a builder.");
+            Debug.LogWarning("BuildingPlacementSystem: selected unit is not a builder.");
             selectedDefinition = null;
+            activeBuilder = null;
             return;
         }
 
+        selectedDefinition = def;
+        activeBuilder = foundBuilder;
         CreateGhost();
     }
 
@@ -128,12 +146,6 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
-        if (!GameManager.Instance.TrySpendTeamEssence(0, selectedDefinition.cost))
-        {
-            Debug.Log($"Not enough Essence to place {selectedDefinition.buildingName}. Cost: {selectedDefinition.cost}, Current: {GameManager.Instance.GetTeamEssence(0)}");
-            return;
-        }
-
         if (activeBuilder == null)
         {
             Debug.LogError("BuildingPlacementSystem: activeBuilder is missing.");
@@ -154,6 +166,13 @@ public class BuildingPlacementSystem : MonoBehaviour
         }
 
         int teamId = (int)builderTeam.Team;
+
+        if (!GameManager.Instance.TrySpendTeamEssence(teamId, selectedDefinition.cost))
+        {
+            Debug.Log($"Not enough Essence to place {selectedDefinition.buildingName}. Cost: {selectedDefinition.cost}, Current: {GameManager.Instance.GetTeamEssence(teamId)}, Team: {teamId}");
+            return;
+        }
+
         var buildSite = Instantiate(buildSitePrefab, point, Quaternion.identity);
         buildSite.Init(selectedDefinition, teamId);
 

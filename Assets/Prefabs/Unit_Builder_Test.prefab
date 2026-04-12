@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5969acb43f6e68c46bba915423eceb8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Builder
-  buildRange: 25
+  buildRange: 0.75
   isBuilding: 0
 --- !u!114 &6284051087763232372
 MonoBehaviour:

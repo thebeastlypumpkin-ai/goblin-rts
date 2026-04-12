@@ -73,6 +73,12 @@ public class BuildSite : MonoBehaviour
         if (activeBuilder.CurrentBuildSite != this) return;
         if (definition == null) return;
 
+        float builderDistance = Vector3.Distance(activeBuilder.transform.position, transform.position);
+        if (builderDistance > activeBuilder.buildRange)
+        {
+            return;
+        }
+
         float buildTime = definition.buildTimeSeconds;
         if (buildTime <= 0f) return;
 

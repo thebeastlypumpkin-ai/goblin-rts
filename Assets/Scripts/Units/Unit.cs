@@ -552,6 +552,12 @@ public class Unit : MonoBehaviour
     public void CommandMoveTo(Vector3 destination)
     {
 
+        Builder builder = GetComponent<Builder>();
+        if (builder != null && builder.IsBuilding)
+        {
+            builder.CancelBuild();
+        }
+
         currentCommand = CommandType.Move;
 
         hasManualAttackOrder = false;

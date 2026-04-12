@@ -5,7 +5,7 @@ public class Builder : MonoBehaviour
 {
     [Header("Build Settings")]
     [Tooltip("How close the builder must be to the build site to start/continue channeling.")]
-    [Min(0.1f)] public float buildRange = 2.0f;
+    [Min(0.1f)] public float buildRange = 0.75f;
 
     [Tooltip("If true, the builder is currently channeling construction.")]
     public bool IsBuilding => isBuilding;
