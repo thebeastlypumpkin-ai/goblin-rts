@@ -13,6 +13,11 @@ public class BuildSite : MonoBehaviour
     [Header("Debug / Testing")]
     [SerializeField] private bool completeOnStartForTesting = false;
 
+    [Header("Starting Unit Spawn")]
+    [SerializeField] private bool spawnUnitOnComplete = false;
+    [SerializeField] private GameObject unitToSpawnOnComplete;
+    [SerializeField] private Vector3 unitSpawnOffset = new Vector3(2f, 0f, 2f);
+
     private Builder activeBuilder;
     private GameObject spawnedBuildingInstance;
 
@@ -65,6 +70,7 @@ public class BuildSite : MonoBehaviour
         if (isComplete) return;
         if (activeBuilder == null) return;
         if (!activeBuilder.IsBuilding) return;
+        if (activeBuilder.CurrentBuildSite != this) return;
         if (definition == null) return;
 
         float buildTime = definition.buildTimeSeconds;
@@ -119,6 +125,33 @@ public class BuildSite : MonoBehaviour
         else
         {
             building.Init(definition, teamId, this);
+        }
+
+        if (spawnUnitOnComplete && unitToSpawnOnComplete != null)
+        {
+            Vector3 spawnPosition = transform.position + unitSpawnOffset;
+
+            GameObject spawnedUnit = Instantiate(
+                unitToSpawnOnComplete,
+                spawnPosition,
+                Quaternion.identity
+            );
+
+            spawnedUnit.name = $"{unitToSpawnOnComplete.name}_T{teamId}";
+
+            TeamMember teamMember = spawnedUnit.GetComponent<TeamMember>();
+            if (teamMember != null)
+            {
+                teamMember.SetTeam(teamId);
+            }
+
+            VisionEmitter visionEmitter = spawnedUnit.GetComponent<VisionEmitter>();
+            if (visionEmitter != null)
+            {
+                visionEmitter.SetTeam(teamId);
+            }
+
+            Debug.Log($"{name} spawned starting unit {spawnedUnit.name}");
         }
 
         Debug.Log($"{name} construction complete. Spawned {completedBuilding.name}");

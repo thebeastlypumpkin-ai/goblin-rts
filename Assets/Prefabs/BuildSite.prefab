@@ -71,7 +71,10 @@ MonoBehaviour:
   teamId: 1
   buildProgress: 0
   isComplete: 0
-  completeOnStartForTesting: 1
+  completeOnStartForTesting: 0
+  spawnUnitOnComplete: 0
+  unitToSpawnOnComplete: {fileID: 0}
+  unitSpawnOffset: {x: 2, y: 0, z: 2}
 --- !u!1 &5017087329845210817
 GameObject:
   m_ObjectHideFlags: 0

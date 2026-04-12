@@ -9,6 +9,7 @@ public class Builder : MonoBehaviour
 
     [Tooltip("If true, the builder is currently channeling construction.")]
     public bool IsBuilding => isBuilding;
+    public BuildSite CurrentBuildSite => currentBuildSite;
 
     [SerializeField] private bool isBuilding;
 
@@ -34,6 +35,11 @@ public class Builder : MonoBehaviour
         {
             Debug.LogWarning("Builder.BeginBuild called with null BuildSite.");
             return;
+        }
+
+        if (currentBuildSite != null && currentBuildSite != site)
+        {
+            currentBuildSite.SetBuilder(null);
         }
 
         currentBuildSite = site;

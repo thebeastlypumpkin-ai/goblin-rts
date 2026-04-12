@@ -140,6 +140,12 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
+        if (activeBuilder.IsBuilding)
+        {
+            Debug.LogWarning("BuildingPlacementSystem: builder is already constructing.");
+            return;
+        }
+
         TeamMember builderTeam = activeBuilder.GetComponent<TeamMember>();
         if (builderTeam == null)
         {
