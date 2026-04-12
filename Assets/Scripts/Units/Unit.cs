@@ -37,6 +37,7 @@ public class Unit : MonoBehaviour
     public int SupplyCost => supplyCost;
     public UnitDefinition UnitDefinition => unitDefinition;
     public Unit CurrentTarget => currentTarget;
+    public Building TargetBuilding => targetBuilding;
     public UnitTag PrimaryTag => (unitDefinition != null) ? unitDefinition.primaryTag : UnitTag.None;
     public bool UsesAoEAttack => unitDefinition != null && unitDefinition.usesAoEAttack;
     public float AoERadius => unitDefinition != null ? unitDefinition.aoeRadius : 0f;
@@ -70,6 +71,7 @@ public class Unit : MonoBehaviour
     private NavMeshAgent agent;
     private float nextAttackTime;
     private Unit currentTarget;
+    private Building targetBuilding;
     private bool isDead;
     private TeamMember teamMember;
     private float nextScanTime;
@@ -119,12 +121,11 @@ public class Unit : MonoBehaviour
 
     private void HandleTick()
     {
-        // Periodic enemy scan
         if (Time.time >= nextScanTime && Time.time >= ignoreAggroUntilTime)
         {
             nextScanTime = Time.time + scanInterval;
 
-            if (currentTarget == null)
+            if (currentTarget == null && targetBuilding == null)
             {
                 Unit found = FindClosestEnemyInRange();
                 if (found != null)
@@ -132,31 +133,48 @@ public class Unit : MonoBehaviour
             }
         }
 
-        if (currentTarget == null)
+        if (currentTarget == null && targetBuilding == null)
             return;
 
-        if (currentTarget.IsDead)
+        if (currentTarget != null && currentTarget.IsDead)
         {
             hasManualAttackOrder = false;
             ClearTarget();
             return;
         }
 
-        // Enemy validation
         if (teamMember != null)
         {
-            TeamMember otherTeam = currentTarget.teamMember;
-            if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+            if (currentTarget != null)
             {
-                hasManualAttackOrder = false;
-                ClearTarget();
-                return;
+                TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
+                if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+                {
+                    hasManualAttackOrder = false;
+                    ClearTarget();
+                    return;
+                }
+            }
+
+            if (targetBuilding != null)
+            {
+                TeamMember otherTeam = targetBuilding.GetComponent<TeamMember>();
+                if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
+                {
+                    hasManualAttackOrder = false;
+                    ClearTarget();
+                    return;
+                }
             }
         }
 
         float leash = hasManualAttackOrder ? manualAttackLeashRange : detectionRange;
 
-        float sqrDist = (currentTarget.transform.position - transform.position).sqrMagnitude;
+        Vector3 activeTargetPosition = currentTarget != null
+    ? currentTarget.transform.position
+    : GetBuildingAttackPoint(targetBuilding);
+
+        float sqrDist = (activeTargetPosition - transform.position).sqrMagnitude;
         if (sqrDist > leash * leash)
         {
             hasManualAttackOrder = false;
@@ -164,7 +182,7 @@ public class Unit : MonoBehaviour
             return;
         }
 
-        float sqrDistToTarget = (currentTarget.transform.position - transform.position).sqrMagnitude;
+        float sqrDistToTarget = (activeTargetPosition - transform.position).sqrMagnitude;
         float attackRangeSqr = attackRange * attackRange;
 
         if (sqrDistToTarget > attackRangeSqr)
@@ -188,7 +206,7 @@ public class Unit : MonoBehaviour
 
             float blockedWaitDistanceSqr = blockedCombatWaitDistance * blockedCombatWaitDistance;
 
-            if (IsFriendlyUnitBlockingTarget(currentTarget) && sqrDistToTarget <= blockedWaitDistanceSqr)
+            if (currentTarget != null && IsFriendlyUnitBlockingTarget(currentTarget) && sqrDistToTarget <= blockedWaitDistanceSqr)
             {
                 if (agent != null)
                 {
@@ -202,7 +220,7 @@ public class Unit : MonoBehaviour
             if (agent != null)
                 agent.stoppingDistance = attackRange;
 
-            MoveTo(currentTarget.transform.position);
+            MoveTo(activeTargetPosition);
             return;
         }
 
@@ -215,13 +233,20 @@ public class Unit : MonoBehaviour
         {
             nextAttackTime = Time.time + attackCooldown;
 
-            float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
+            if (currentTarget != null)
+            {
+                float finalDamage = attackDamage * GetDamageMultiplierAgainst(currentTarget);
 
-            currentTarget.TakeDamage(finalDamage, this);
+                currentTarget.TakeDamage(finalDamage, this);
 
-            OnAttackLanded?.Invoke(this, currentTarget, finalDamage);
+                OnAttackLanded?.Invoke(this, currentTarget, finalDamage);
 
-            ApplyAoEDamage(currentTarget, finalDamage);
+                ApplyAoEDamage(currentTarget, finalDamage);
+            }
+            else if (targetBuilding != null)
+            {
+                targetBuilding.TakeDamage(attackDamage);
+            }
         }
     }
 
@@ -609,6 +634,25 @@ public class Unit : MonoBehaviour
         return accepted;
     }
 
+    public bool CommandAttackBuilding(Building target)
+    {
+        currentCommand = CommandType.Attack;
+
+        if (target == null) return false;
+
+        hasMoveOrder = false;
+
+        ignoreAggroUntilTime = 0f;
+        hasManualAttackOrder = true;
+
+        combatAnchorPosition = transform.position;
+        hasCombatAnchor = true;
+
+        bool accepted = SetBuildingTarget(target);
+
+        return accepted;
+    }
+
     public bool SetTarget(Unit target)
     {
         if (isDead) return false;
@@ -630,9 +674,32 @@ public class Unit : MonoBehaviour
         return true;
     }
 
+    public bool SetBuildingTarget(Building target)
+    {
+        if (isDead) return false;
+        if (target == null) return false;
+
+        TeamMember myTeam = teamMember;
+        TeamMember targetTeam = target.GetComponent<TeamMember>();
+
+        if (myTeam != null)
+        {
+            if (targetTeam == null)
+                return false;
+
+            if (!myTeam.IsEnemy(targetTeam))
+                return false;
+        }
+
+        currentTarget = null;
+        targetBuilding = target;
+        return true;
+    }
+
     public void ClearTarget()
     {
         currentTarget = null;
+        targetBuilding = null;
         hasCombatAnchor = false;
     }
 
@@ -661,6 +728,19 @@ public class Unit : MonoBehaviour
         {
             Die();
         }
+    }
+
+    private Vector3 GetBuildingAttackPoint(Building building)
+    {
+        if (building == null)
+            return transform.position;
+
+        Collider buildingCollider = building.GetComponentInChildren<Collider>();
+
+        if (buildingCollider != null)
+            return buildingCollider.ClosestPoint(transform.position);
+
+        return building.transform.position;
     }
 
     private Unit FindClosestEnemyInRange()
@@ -709,6 +789,7 @@ public class Unit : MonoBehaviour
 
         hasManualAttackOrder = false;
         currentTarget = null;
+        targetBuilding = null;
 
         ActiveUnits.Remove(this);
 

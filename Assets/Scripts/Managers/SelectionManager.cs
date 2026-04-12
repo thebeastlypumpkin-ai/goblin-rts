@@ -166,6 +166,27 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
+        if (Physics.Raycast(ray, out RaycastHit buildingHit, 1000f, buildingLayerMask))
+        {
+            Building targetBuilding = buildingHit.collider.GetComponentInParent<Building>();
+            if (targetBuilding != null)
+            {
+                int acceptedCount = 0;
+
+                foreach (var u in selectedUnits)
+                {
+                    if (u == null || u.IsDead) continue;
+                    if (u.CommandAttackBuilding(targetBuilding)) acceptedCount++;
+                }
+
+                if (acceptedCount > 0)
+                {
+                    Debug.Log($"Attack Building Target: {targetBuilding.name} (accepted by {acceptedCount}/{selectedUnits.Count})");
+                    return;
+                }
+            }
+        }
+
         if (Physics.Raycast(ray, out RaycastHit groundHit, 1000f, groundLayerMask))
         {
             for (int i = 0; i < selectedUnits.Count; i++)
