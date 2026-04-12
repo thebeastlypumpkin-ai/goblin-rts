@@ -167,10 +167,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6849746764463373714, guid: b99963fdd8538984793d11d37a6200d5, type: 3}
-      propertyPath: team
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7543697616109106897, guid: b99963fdd8538984793d11d37a6200d5, type: 3}
       propertyPath: m_Name
       value: BeastPen_Complete_test
@@ -581,22 +577,6 @@ PrefabInstance:
     - target: {fileID: 4153527573961188023, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: teamId
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: definition
-      value: 
-      objectReference: {fileID: 11400000, guid: 97482b87e50b883439c4a305886e9006, type: 2}
-    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: completeOnStartForTesting
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8906703417610227147, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 9.71
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1612,10 +1592,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6284051087763232372, guid: f1ffd72e478098549b089639569c1364, type: 3}
-      propertyPath: teamId
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6861561267032273382, guid: f1ffd72e478098549b089639569c1364, type: 3}
       propertyPath: m_Name
       value: Unit_Builder_Test
@@ -1660,12 +1636,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7645404455520928979, guid: f1ffd72e478098549b089639569c1364, type: 3}
-      propertyPath: team
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4207375142417000230, guid: f1ffd72e478098549b089639569c1364, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2375,13 +2346,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7645404455520928979, guid: f1ffd72e478098549b089639569c1364, type: 3}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4207375142417000230, guid: f1ffd72e478098549b089639569c1364, type: 3}
-    - {fileID: 3713214142284185096, guid: f1ffd72e478098549b089639569c1364, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2483,18 +2448,6 @@ PrefabInstance:
     - target: {fileID: 4153527573961188023, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: definition
-      value: 
-      objectReference: {fileID: 11400000, guid: 97482b87e50b883439c4a305886e9006, type: 2}
-    - target: {fileID: 5748077757775462041, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: completeOnStartForTesting
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8906703417610227147, guid: e5d14554519a0454e9d8442f91b4582e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 9.71
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2690,41 +2643,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Barracks_Complete_test
       objectReference: {fileID: 0}
-    - target: {fileID: 8498835565371771700, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
-      propertyPath: team
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3709016456406546103, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
-    - {fileID: 2090727328068738597, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 127fb69bd51f14c46a0731985d7e281d, type: 3}
---- !u!1 &1933261673 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3306360672069366256, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
-  m_PrefabInstance: {fileID: 44524813706382688}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1933261686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933261673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57976518b064b304688c9d7ab9964106, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SquadController
-  useSquadSystem: 1
-  visualMemberCount: 5
-  spacingX: 0.9
-  spacingZ: 0.9
-  useSharedHealthPool: 1
-  useAttackSync: 1
-  attackPushDistance: 0.35
 --- !u!1 &2020770957
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,10 +2824,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 742496916749144981, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
-      propertyPath: teamId
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2275265188479258877, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 21.27
@@ -2949,17 +2868,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_Target
       objectReference: {fileID: 0}
-    - target: {fileID: 3564049850837728967, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3306360672069366256, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1933261686}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 688a5c591d2972844ae70b0fea07bda1, type: 3}
 --- !u!1001 &4499955082658752182
 PrefabInstance:
@@ -2969,18 +2881,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3248605365454589770, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
-      propertyPath: teamId
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3924231976867489601, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
-      propertyPath: useSquadSystem
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5592037909460932624, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
-      propertyPath: supplyCost
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6861561267032273382, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
       propertyPath: m_Name
       value: Unit_Test
@@ -3023,10 +2923,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6969000551815050402, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7645404455520928979, guid: 463fa8f87ab2d4944a656957db8f8740, type: 3}
-      propertyPath: team
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
