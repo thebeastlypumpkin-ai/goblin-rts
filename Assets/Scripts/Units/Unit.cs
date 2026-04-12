@@ -127,9 +127,18 @@ public class Unit : MonoBehaviour
 
             if (currentTarget == null && targetBuilding == null)
             {
-                Unit found = FindClosestEnemyInRange();
-                if (found != null)
-                    currentTarget = found;
+                Unit foundUnit = FindClosestEnemyInRange();
+
+                if (foundUnit != null)
+                {
+                    currentTarget = foundUnit;
+                }
+                else
+                {
+                    Building foundBuilding = FindClosestEnemyBuildingInRange();
+                    if (foundBuilding != null)
+                        targetBuilding = foundBuilding;
+                }
             }
         }
 
@@ -784,6 +793,42 @@ public class Unit : MonoBehaviour
             {
                 closestSqrDist = sqrDist;
                 closest = u;
+            }
+        }
+
+        return closest;
+    }
+
+    private Building FindClosestEnemyBuildingInRange()
+    {
+        Building closest = null;
+        float closestSqrDist = float.MaxValue;
+        float rangeSqr = detectionRange * detectionRange;
+
+        Building[] allBuildings = FindObjectsOfType<Building>();
+
+        foreach (Building b in allBuildings)
+        {
+            if (b == null) continue;
+            if (b.IsDestroyed) continue;
+
+            TeamMember otherTeam = b.GetComponent<TeamMember>();
+
+            if (teamMember != null)
+            {
+                if (otherTeam == null) continue;
+                if (!teamMember.IsEnemy(otherTeam)) continue;
+            }
+
+            Vector3 targetPoint = GetBuildingAttackPoint(b);
+            float sqrDist = (targetPoint - transform.position).sqrMagnitude;
+
+            if (sqrDist > rangeSqr) continue;
+
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closest = b;
             }
         }
 
