@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BuildSite : MonoBehaviour
 {
@@ -108,6 +109,37 @@ public class BuildSite : MonoBehaviour
         }
 
         isComplete = true;
+
+        if (activeBuilder != null)
+        {
+            Vector3 moveAwayDirection = (activeBuilder.transform.position - transform.position).normalized;
+
+            if (moveAwayDirection == Vector3.zero)
+            {
+                moveAwayDirection = transform.forward;
+            }
+
+            Vector3 desiredPosition = transform.position + (moveAwayDirection * 4f);
+
+            activeBuilder.CancelBuild();
+
+            NavMeshAgent agent = activeBuilder.GetComponent<NavMeshAgent>();
+            Unit builderUnit = activeBuilder.GetComponent<Unit>();
+
+            if (agent != null)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(desiredPosition, out hit, 3f, NavMesh.AllAreas))
+                {
+                    agent.Warp(hit.position);
+
+                    if (builderUnit != null)
+                    {
+                        builderUnit.CommandMoveTo(hit.position + (moveAwayDirection * 1.5f));
+                    }
+                }
+            }
+        }
 
         GameObject completedBuilding = Instantiate(
             definition.completedBuildingPrefab,

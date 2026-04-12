@@ -28,6 +28,11 @@ public class ProductionQueue : MonoBehaviour
         }
     }
 
+    public void SetTeamId(int newTeamId)
+    {
+        teamId = newTeamId;
+    }
+
 
     void Update()
     {

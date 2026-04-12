@@ -108,6 +108,12 @@ public class Building : MonoBehaviour
             tm.SetTeam(teamId);
             Debug.Log($"{name} TeamMember set to {tm.Team} from building teamId {teamId}");
         }
+
+        ProductionQueue productionQueue = GetComponent<ProductionQueue>();
+        if (productionQueue != null)
+        {
+            productionQueue.SetTeamId(teamId);
+        }
         else
         {
             Debug.LogWarning($"{name} is missing TeamMember in Init.");
