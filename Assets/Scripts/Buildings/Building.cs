@@ -59,6 +59,7 @@ public class Building : MonoBehaviour
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
+    public bool IsDestroyed { get; private set; }
 
     public bool IsFortress => isFortress;
     public int CurrentTier => currentTier;
@@ -146,6 +147,7 @@ public class Building : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        if (IsDestroyed) return;
         if (currentHealth <= 0f) return;
 
         currentHealth -= amount;
@@ -163,6 +165,9 @@ public class Building : MonoBehaviour
 
     private void Die()
     {
+        if (IsDestroyed) return;
+        IsDestroyed = true;
+
         Debug.Log($"{name} destroyed!");
 
         if (isFortress && SupplyManager.Instance != null)
@@ -176,11 +181,26 @@ public class Building : MonoBehaviour
             parentSite.isComplete = false;
         }
 
+        ProductionQueue productionQueue = GetComponent<ProductionQueue>();
+        if (productionQueue != null)
+        {
+            Destroy(productionQueue);
+        }
+
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = false;
+        }
+
         Destroy(gameObject);
     }
 
     private void Update()
     {
+        if (IsDestroyed)
+            return;
+
         HandlePassiveRepair();
         HandleFortressIncome();
         HandleGenericBuildingIncome();
@@ -189,7 +209,6 @@ public class Building : MonoBehaviour
         {
             TakeDamage(100f);
         }
-
     }
 
     private void HandlePassiveRepair()

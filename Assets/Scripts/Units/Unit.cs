@@ -143,6 +143,13 @@ public class Unit : MonoBehaviour
             return;
         }
 
+        if (targetBuilding != null && targetBuilding.IsDestroyed)
+        {
+            hasManualAttackOrder = false;
+            ClearTarget();
+            return;
+        }
+
         if (teamMember != null)
         {
             if (currentTarget != null)
@@ -243,8 +250,16 @@ public class Unit : MonoBehaviour
 
                 ApplyAoEDamage(currentTarget, finalDamage);
             }
+
             else if (targetBuilding != null)
             {
+                if (targetBuilding.IsDestroyed)
+                {
+                    hasManualAttackOrder = false;
+                    ClearTarget();
+                    return;
+                }
+
                 targetBuilding.TakeDamage(attackDamage);
             }
         }
