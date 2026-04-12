@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour
     [Header("Combat")]
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackRange = 2.5f;
+    [SerializeField] private float buildingAttackRangeBonus = 1.5f;
     [SerializeField] private float attacksPerSecond = 1f;
     [SerializeField] private float detectionRange = 8f;
     [SerializeField] private float combatAnchorLeashRange = 3f;
@@ -199,7 +200,11 @@ public class Unit : MonoBehaviour
         }
 
         float sqrDistToTarget = (activeTargetPosition - transform.position).sqrMagnitude;
-        float attackRangeSqr = attackRange * attackRange;
+        float effectiveAttackRange = targetBuilding != null
+    ? attackRange + buildingAttackRangeBonus
+    : attackRange;
+
+        float attackRangeSqr = effectiveAttackRange * effectiveAttackRange;
 
         if (sqrDistToTarget > attackRangeSqr)
         {
@@ -234,7 +239,7 @@ public class Unit : MonoBehaviour
             }
 
             if (agent != null)
-                agent.stoppingDistance = attackRange;
+                agent.stoppingDistance = 0.1f;
 
             MoveTo(activeTargetPosition);
             return;
@@ -759,12 +764,31 @@ public class Unit : MonoBehaviour
         if (building == null)
             return transform.position;
 
-        Collider buildingCollider = building.GetComponentInChildren<Collider>();
+        Collider[] colliders = building.GetComponentsInChildren<Collider>();
 
-        if (buildingCollider != null)
-            return buildingCollider.ClosestPoint(transform.position);
+        if (colliders == null || colliders.Length == 0)
+            return building.transform.position;
 
-        return building.transform.position;
+        Vector3 closestPoint = building.transform.position;
+        float closestSqrDist = float.MaxValue;
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider col = colliders[i];
+            if (col == null || !col.enabled)
+                continue;
+
+            Vector3 point = col.ClosestPoint(transform.position);
+            float sqrDist = (point - transform.position).sqrMagnitude;
+
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closestPoint = point;
+            }
+        }
+
+        return closestPoint;
     }
 
     private Unit FindClosestEnemyInRange()
