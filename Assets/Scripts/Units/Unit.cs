@@ -24,7 +24,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private float attacksPerSecond = 1f;
     [SerializeField] private float detectionRange = 8f;
     [SerializeField] private float combatAnchorLeashRange = 3f;
-    [SerializeField] private float blockedCombatWaitDistance = 4f;
+    [SerializeField] private float blockedCombatWaitDistance = 1.5f;
     [Header("Data")]
     [SerializeField] private UnitDefinition unitDefinition;
     [Header("Status Runtime")]
@@ -148,14 +148,12 @@ public class Unit : MonoBehaviour
 
         if (currentTarget != null && currentTarget.IsDead)
         {
-            hasManualAttackOrder = false;
             ClearTarget();
             return;
         }
 
         if (targetBuilding != null && targetBuilding.IsDestroyed)
         {
-            hasManualAttackOrder = false;
             ClearTarget();
             return;
         }
@@ -167,7 +165,6 @@ public class Unit : MonoBehaviour
                 TeamMember otherTeam = currentTarget.GetComponent<TeamMember>();
                 if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
                 {
-                    hasManualAttackOrder = false;
                     ClearTarget();
                     return;
                 }
@@ -178,7 +175,6 @@ public class Unit : MonoBehaviour
                 TeamMember otherTeam = targetBuilding.GetComponent<TeamMember>();
                 if (otherTeam != null && !teamMember.IsEnemy(otherTeam))
                 {
-                    hasManualAttackOrder = false;
                     ClearTarget();
                     return;
                 }
@@ -194,7 +190,6 @@ public class Unit : MonoBehaviour
         float sqrDist = (activeTargetPosition - transform.position).sqrMagnitude;
         if (sqrDist > leash * leash)
         {
-            hasManualAttackOrder = false;
             ClearTarget();
             return;
         }
@@ -215,9 +210,10 @@ public class Unit : MonoBehaviour
 
                 if (anchorSqr > leashSqr)
                 {
-                    if (agent != null)
+                    if (agent != null && agent.isOnNavMesh)
                     {
                         agent.isStopped = true;
+                        agent.ResetPath();
                         agent.velocity = Vector3.zero;
                     }
 
@@ -229,10 +225,10 @@ public class Unit : MonoBehaviour
 
             if (currentTarget != null && IsFriendlyUnitBlockingTarget(currentTarget) && sqrDistToTarget <= blockedWaitDistanceSqr)
             {
-                if (agent != null)
+                if (agent != null && agent.isOnNavMesh)
                 {
-                    agent.isStopped = true;
-                    agent.velocity = Vector3.zero;
+                    agent.isStopped = false;
+                    MoveTo(activeTargetPosition);
                 }
 
                 return;
@@ -241,12 +237,19 @@ public class Unit : MonoBehaviour
             if (agent != null)
                 agent.stoppingDistance = 0.1f;
 
-            MoveTo(activeTargetPosition);
+            if (agent != null && agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+                MoveTo(activeTargetPosition);
+            }
             return;
         }
 
-        if (agent != null)
+        if (agent != null && agent.isOnNavMesh)
+        {
             agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
 
         float attackCooldown = 1f / attacksPerSecond;
 
@@ -269,7 +272,6 @@ public class Unit : MonoBehaviour
             {
                 if (targetBuilding.IsDestroyed)
                 {
-                    hasManualAttackOrder = false;
                     ClearTarget();
                     return;
                 }
@@ -620,7 +622,7 @@ public class Unit : MonoBehaviour
         hasMoveOrder = true;
         moveOrderDestination = destination;
 
-        ignoreAggroUntilTime = float.PositiveInfinity; // ignore aggro until we arrive
+        ignoreAggroUntilTime = Time.time + 0.25f;
         ClearTarget();
 
         if (agent != null)
@@ -883,8 +885,11 @@ public class Unit : MonoBehaviour
         Debug.Log(name + " has died.");
 
         // Disable movement
-        if (agent != null)
+        if (agent != null && agent.isOnNavMesh)
+        {
             agent.isStopped = true;
+            agent.ResetPath();
+        }
 
         // Change color to indicate death
         unitRenderer.material.color = Color.red;
