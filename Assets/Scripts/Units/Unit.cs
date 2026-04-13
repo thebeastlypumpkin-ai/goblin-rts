@@ -633,6 +633,34 @@ public class Unit : MonoBehaviour
         MoveTo(destination);
     }
 
+    public void CommandRetreatTo(Vector3 destination)
+    {
+        Builder builder = GetComponent<Builder>();
+        if (builder != null && builder.IsBuilding)
+        {
+            builder.CancelBuild();
+        }
+
+        currentCommand = CommandType.Move;
+
+        hasManualAttackOrder = false;
+        hasCombatAnchor = false;
+
+        hasMoveOrder = true;
+        moveOrderDestination = destination;
+
+        ignoreAggroUntilTime = float.PositiveInfinity;
+        ClearTarget();
+
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+            agent.stoppingDistance = 0.1f;
+        }
+
+        MoveTo(destination);
+    }
+
     public bool CommandAttack(Unit target)
     {
         currentCommand = CommandType.Attack;

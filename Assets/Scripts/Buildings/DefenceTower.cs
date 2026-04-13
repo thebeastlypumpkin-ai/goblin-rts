@@ -5,9 +5,11 @@ public class DefenseTower : MonoBehaviour
 {
     [Header("Tower Settings")]
     [Header("Tower Settings")]
-    [SerializeField] private float attackRange = 8f;
+    [SerializeField] private float attackRange = 12f;
     [SerializeField] private float attackCooldown = 1.0f;
     [SerializeField] private int attackDamage = 10;
+    [SerializeField] private TowerProjectile projectilePrefab;
+    [SerializeField] private Transform projectileSpawnPoint;
 
 
     [Header("Runtime")]
@@ -167,8 +169,23 @@ public class DefenseTower : MonoBehaviour
 
         attackTimer = 0f;
 
-        currentTarget.TakeDamage(attackDamage, null);
-        Debug.Log($"{name} hit {currentTarget.name} for {attackDamage} damage.");
+        if (projectilePrefab == null)
+        {
+            Debug.LogWarning($"{name} is missing projectilePrefab.");
+            return;
+        }
+
+        Transform spawnPoint = projectileSpawnPoint != null ? projectileSpawnPoint : transform;
+
+        TowerProjectile projectile = Instantiate(
+            projectilePrefab,
+            spawnPoint.position,
+            Quaternion.identity
+        );
+
+        projectile.Init(currentTarget, attackDamage);
+
+        Debug.Log($"{name} fired projectile at {currentTarget.name}");
     }
 
 

@@ -207,7 +207,12 @@ public class SelectionManager : MonoBehaviour
 
                 Vector3 targetPosition = groundHit.point + offset;
 
-                u.CommandMoveTo(targetPosition);
+                bool retreatHeld = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+
+                if (retreatHeld)
+                    u.CommandRetreatTo(targetPosition);
+                else
+                    u.CommandMoveTo(targetPosition);
             }
 
             Debug.Log("Formation Move Command issued.");
