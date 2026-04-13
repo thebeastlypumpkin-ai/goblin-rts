@@ -78,7 +78,6 @@ public class Unit : MonoBehaviour
     private float nextScanTime;
     [SerializeField] private float scanInterval = 0.25f;
     private float ignoreAggroUntilTime;
-    [SerializeField] private float manualAttackLeashRange = 25f;
     private bool hasManualAttackOrder;
     private bool hasMoveOrder;
     private Vector3 moveOrderDestination;
@@ -181,17 +180,24 @@ public class Unit : MonoBehaviour
             }
         }
 
-        float leash = hasManualAttackOrder ? manualAttackLeashRange : detectionRange;
-
         Vector3 activeTargetPosition = currentTarget != null
     ? currentTarget.transform.position
     : GetBuildingAttackPoint(targetBuilding);
 
         float sqrDist = (activeTargetPosition - transform.position).sqrMagnitude;
-        if (sqrDist > leash * leash)
+
+        // Only auto-acquired targets should be leash-limited.
+        // Manual attack orders should persist until the target dies,
+        // becomes invalid, or the player gives a new order.
+        if (!hasManualAttackOrder)
         {
-            ClearTarget();
-            return;
+            float leash = detectionRange;
+
+            if (sqrDist > leash * leash)
+            {
+                ClearTarget();
+                return;
+            }
         }
 
         float sqrDistToTarget = (activeTargetPosition - transform.position).sqrMagnitude;
@@ -667,9 +673,9 @@ public class Unit : MonoBehaviour
 
         if (target == null) return false;
 
-        // Manual attack interrupts move order
-        hasMoveOrder = false;
+        ClearTarget();
 
+        hasMoveOrder = false;
         ignoreAggroUntilTime = 0f;
         hasManualAttackOrder = true;
 
@@ -699,8 +705,9 @@ public class Unit : MonoBehaviour
 
         if (target == null) return false;
 
-        hasMoveOrder = false;
+        ClearTarget();
 
+        hasMoveOrder = false;
         ignoreAggroUntilTime = 0f;
         hasManualAttackOrder = true;
 
@@ -729,6 +736,7 @@ public class Unit : MonoBehaviour
                 return false;
         }
 
+        targetBuilding = null;
         currentTarget = target;
         return true;
     }
