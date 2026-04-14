@@ -4,23 +4,22 @@ using UnityEngine;
 public class DefenseTower : MonoBehaviour
 {
     [Header("Tower Settings")]
-    [Header("Tower Settings")]
     [SerializeField] private float attackRange = 12f;
     [SerializeField] private float attackCooldown = 1.0f;
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private TowerProjectile projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
 
-
     [Header("Runtime")]
-    [SerializeField] private Unit currentTarget;
+    [SerializeField] private Unit currentUnitTarget;
+    [SerializeField] private Building currentBuildingTarget;
 
     private readonly List<Unit> unitsInRange = new List<Unit>();
+    private readonly List<Building> buildingsInRange = new List<Building>();
 
     private TeamMember teamMember;
     private SphereCollider rangeTrigger;
     private float attackTimer = 0f;
-
 
     private void Awake()
     {
@@ -50,54 +49,67 @@ public class DefenseTower : MonoBehaviour
         return other.Team != teamMember.Team;
     }
 
-
     private void OnTriggerEnter(Collider other)
     {
         Unit unit = other.GetComponentInParent<Unit>();
-        if (unit == null)
-            return;
-
-        if (unit.IsDead)
-            return;
-
-        TeamMember otherTeam = unit.GetComponent<TeamMember>();
-        if (otherTeam == null)
-            return;
-
-        if (!IsEnemy(otherTeam))
-            return;
-
-        if (!unitsInRange.Contains(unit))
+        if (unit != null && !unit.IsDead)
         {
-            unitsInRange.Add(unit);
-            Debug.Log($"{name} detected enemy in range: {unit.name}");
+            TeamMember otherTeam = unit.GetComponent<TeamMember>();
+            if (otherTeam != null && IsEnemy(otherTeam))
+            {
+                if (!unitsInRange.Contains(unit))
+                {
+                    unitsInRange.Add(unit);
+                    Debug.Log($"{name} detected enemy unit in range: {unit.name}");
+                }
+            }
+        }
+
+        Building building = other.GetComponentInParent<Building>();
+        if (building != null && !building.IsDestroyed)
+        {
+            TeamMember otherTeam = building.GetComponent<TeamMember>();
+            if (otherTeam != null && IsEnemy(otherTeam))
+            {
+                if (!buildingsInRange.Contains(building))
+                {
+                    buildingsInRange.Add(building);
+                    Debug.Log($"{name} detected enemy building in range: {building.name}");
+                }
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         Unit unit = other.GetComponentInParent<Unit>();
-        if (unit == null)
-            return;
-
-        if (unitsInRange.Remove(unit))
+        if (unit != null)
         {
-            Debug.Log($"{name} enemy left range: {unit.name}");
+            unitsInRange.Remove(unit);
+
+            if (currentUnitTarget == unit)
+            {
+                currentUnitTarget = null;
+            }
         }
 
-        if (currentTarget == unit)
+        Building building = other.GetComponentInParent<Building>();
+        if (building != null)
         {
-            currentTarget = null;
+            buildingsInRange.Remove(building);
+
+            if (currentBuildingTarget == building)
+            {
+                currentBuildingTarget = null;
+            }
         }
     }
 
     private void Update()
     {
-        CleanupInvalidTargets();
         AcquireTarget();
         HandleAttack();
     }
-
 
     private void CleanupInvalidTargets()
     {
@@ -109,33 +121,78 @@ public class DefenseTower : MonoBehaviour
             }
         }
 
-        if (currentTarget == null)
-            return;
-
-        if (!unitsInRange.Contains(currentTarget))
+        for (int i = buildingsInRange.Count - 1; i >= 0; i--)
         {
-            currentTarget = null;
+            if (buildingsInRange[i] == null || buildingsInRange[i].IsDestroyed)
+            {
+                buildingsInRange.RemoveAt(i);
+            }
+        }
+
+        if (currentUnitTarget != null && !unitsInRange.Contains(currentUnitTarget))
+        {
+            currentUnitTarget = null;
+        }
+
+        if (currentBuildingTarget != null && !buildingsInRange.Contains(currentBuildingTarget))
+        {
+            currentBuildingTarget = null;
         }
     }
 
     private void AcquireTarget()
     {
-        if (currentTarget != null)
-            return;
+        currentUnitTarget = null;
+        currentBuildingTarget = null;
 
-        if (unitsInRange.Count == 0)
-            return;
-
-        Unit closest = null;
         float closestSqrDist = float.MaxValue;
 
-        for (int i = 0; i < unitsInRange.Count; i++)
+        Unit closestUnit = FindClosestEnemyUnitInRange();
+        if (closestUnit != null)
         {
-            Unit unit = unitsInRange[i];
+            float unitSqrDist = (closestUnit.transform.position - transform.position).sqrMagnitude;
+            if (unitSqrDist < closestSqrDist)
+            {
+                closestSqrDist = unitSqrDist;
+                currentUnitTarget = closestUnit;
+                currentBuildingTarget = null;
+            }
+        }
+
+        Building closestBuilding = FindClosestEnemyBuildingInRange();
+        if (closestBuilding != null)
+        {
+            float buildingSqrDist = (closestBuilding.transform.position - transform.position).sqrMagnitude;
+            if (buildingSqrDist < closestSqrDist)
+            {
+                closestSqrDist = buildingSqrDist;
+                currentUnitTarget = null;
+                currentBuildingTarget = closestBuilding;
+            }
+        }
+    }
+
+    private Unit FindClosestEnemyUnitInRange()
+    {
+        Unit[] allUnits = FindObjectsOfType<Unit>();
+        Unit closest = null;
+        float closestSqrDist = float.MaxValue;
+        float rangeSqr = attackRange * attackRange;
+
+        for (int i = 0; i < allUnits.Length; i++)
+        {
+            Unit unit = allUnits[i];
             if (unit == null || unit.IsDead)
                 continue;
 
+            TeamMember otherTeam = unit.GetComponent<TeamMember>();
+            if (otherTeam == null || !IsEnemy(otherTeam))
+                continue;
+
             float sqrDist = (unit.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist > rangeSqr)
+                continue;
+
             if (sqrDist < closestSqrDist)
             {
                 closestSqrDist = sqrDist;
@@ -143,22 +200,54 @@ public class DefenseTower : MonoBehaviour
             }
         }
 
-        currentTarget = closest;
+        return closest;
+    }
 
-        if (currentTarget != null)
+    private Building FindClosestEnemyBuildingInRange()
+    {
+        Building[] allBuildings = FindObjectsOfType<Building>();
+        Building closest = null;
+        float closestSqrDist = float.MaxValue;
+        float rangeSqr = attackRange * attackRange;
+
+        for (int i = 0; i < allBuildings.Length; i++)
         {
-            Debug.Log($"{name} targeting {currentTarget.name}");
+            Building building = allBuildings[i];
+            if (building == null || building.IsDestroyed)
+                continue;
+
+            TeamMember otherTeam = building.GetComponent<TeamMember>();
+            if (otherTeam == null || !IsEnemy(otherTeam))
+                continue;
+
+            float sqrDist = (building.transform.position - transform.position).sqrMagnitude;
+            if (sqrDist > rangeSqr)
+                continue;
+
+            if (sqrDist < closestSqrDist)
+            {
+                closestSqrDist = sqrDist;
+                closest = building;
+            }
         }
+
+        return closest;
     }
 
     private void HandleAttack()
     {
-        if (currentTarget == null)
+        if (currentUnitTarget == null && currentBuildingTarget == null)
             return;
 
-        if (currentTarget.IsDead)
+        if (currentUnitTarget != null && currentUnitTarget.IsDead)
         {
-            currentTarget = null;
+            currentUnitTarget = null;
+            return;
+        }
+
+        if (currentBuildingTarget != null && currentBuildingTarget.IsDestroyed)
+        {
+            currentBuildingTarget = null;
             return;
         }
 
@@ -183,10 +272,15 @@ public class DefenseTower : MonoBehaviour
             Quaternion.identity
         );
 
-        projectile.Init(currentTarget, attackDamage);
-
-        Debug.Log($"{name} fired projectile at {currentTarget.name}");
+        if (currentUnitTarget != null)
+        {
+            projectile.Init(currentUnitTarget, attackDamage);
+            Debug.Log($"{name} fired projectile at unit {currentUnitTarget.name}");
+        }
+        else if (currentBuildingTarget != null)
+        {
+            projectile.InitBuilding(currentBuildingTarget, attackDamage);
+            Debug.Log($"{name} fired projectile at building {currentBuildingTarget.name}");
+        }
     }
-
-
 }
