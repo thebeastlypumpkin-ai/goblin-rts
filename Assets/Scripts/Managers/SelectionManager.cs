@@ -39,6 +39,11 @@ public class SelectionManager : MonoBehaviour
 
     void Update()
     {
+        if (SpectatorManager.Instance != null && SpectatorManager.Instance.IsSpectator)
+        {
+            return;
+        }
+
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 

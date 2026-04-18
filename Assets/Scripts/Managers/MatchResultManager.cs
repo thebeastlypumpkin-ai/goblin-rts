@@ -10,6 +10,7 @@ public class MatchResultManager : MonoBehaviour
 
     private float nextCheckTime;
     private bool matchEnded = false;
+    private bool localPlayerDefeated = false;
 
     private void Awake()
     {
@@ -83,6 +84,7 @@ public class MatchResultManager : MonoBehaviour
             aliveTeamList += team + " ";
         }
 
+        CheckLocalPlayerDefeat(aliveTeams);
         CheckForMatchEnd(aliveTeams);
     }
 
@@ -111,7 +113,31 @@ public class MatchResultManager : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SetState(GameState.Paused);
+            Debug.Log("[Match] Match ended → game continues running (no pause).");
+        }
+    }
+
+    private void CheckLocalPlayerDefeat(HashSet<int> aliveTeams)
+    {
+        if (localPlayerDefeated)
+            return;
+
+        if (SpectatorManager.Instance == null)
+            return;
+
+        int localTeam = SpectatorManager.Instance.LocalTeamId;
+
+        if (!aliveTeams.Contains(localTeam))
+        {
+            localPlayerDefeated = true;
+
+            Debug.Log($"[Spectator] Local player team {localTeam} has been defeated.");
+
+            if (SpectatorManager.Instance != null)
+            {
+                SpectatorManager.Instance.SetSpectator(true);
+                Debug.Log("[Spectator] Spectator mode ENABLED.");
+            }
         }
     }
 }
