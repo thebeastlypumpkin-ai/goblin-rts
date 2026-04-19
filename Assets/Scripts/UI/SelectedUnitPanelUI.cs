@@ -8,6 +8,7 @@ public class SelectedUnitPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text unitNameText;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text squadSizeText;
+    [SerializeField] private TMP_Text teamText;
 
     public void ShowUnit(Unit unit)
     {
@@ -22,6 +23,30 @@ public class SelectedUnitPanelUI : MonoBehaviour
 
         if (unitNameText != null)
             unitNameText.text = unit.name;
+
+        if (teamText != null)
+        {
+            TeamMember tm = unit.GetComponent<TeamMember>();
+
+            if (tm != null)
+            {
+                int localTeamId = 0;
+
+                if (SpectatorManager.Instance != null)
+                    localTeamId = SpectatorManager.Instance.LocalTeamId;
+
+                int unitTeamId = (int)tm.Team;
+
+                if (unitTeamId == localTeamId)
+                    teamText.text = "Friendly";
+                else
+                    teamText.text = "Enemy";
+            }
+            else
+            {
+                teamText.text = "Unknown";
+            }
+        }
 
         if (healthText != null)
             healthText.text = $"HP: {Mathf.CeilToInt(unit.CurrentHealth)} / {Mathf.CeilToInt(unit.MaxHealth)}";
