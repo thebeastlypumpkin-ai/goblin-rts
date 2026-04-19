@@ -8,10 +8,13 @@ public class BuildingPlacementSystem : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private BuildSite buildSitePrefab;
     [SerializeField] private Builder builder;
+    [SerializeField] private BuildingDefinition debugWallDefinition;
 
     private Builder activeBuilder;
     private BuildingDefinition selectedDefinition;
     private GameObject ghost;
+
+    private float currentRotationY = 0f;
 
     public bool IsPlacing => selectedDefinition != null;
 
@@ -22,20 +25,37 @@ public class BuildingPlacementSystem : MonoBehaviour
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            if (debugWallDefinition != null)
+            {
+                StartPlacing(debugWallDefinition);
+            }
+            else
+            {
+                Debug.LogWarning("BuildingPlacementSystem: debugWallDefinition is not assigned.");
+            }
+        }
+
         if (!IsPlacing) return;
 
-        if (!TryGetMouseGroundPoint(out var point))
+        HandleRotationInput();
+
+        if (!TryGetMouseGroundPoint(out var rawPoint))
         {
             Debug.LogWarning("No valid ground point found for placement.");
             return;
         }
 
-        UpdateGhost(point);
+        Vector3 finalPoint = GetPlacementPoint(rawPoint);
+
+        UpdateGhost(finalPoint);
 
         // Left click confirms
         if (Input.GetMouseButtonDown(0))
         {
-            PlaceBuildSite(point);
+            PlaceBuildSite(finalPoint);
         }
 
         // Right click cancels
@@ -85,12 +105,16 @@ public class BuildingPlacementSystem : MonoBehaviour
 
         selectedDefinition = def;
         activeBuilder = foundBuilder;
+        currentRotationY = 0f;
         CreateGhost();
     }
 
     public void CancelPlacement()
     {
         selectedDefinition = null;
+        activeBuilder = null;
+        currentRotationY = 0f;
+
         if (ghost != null) Destroy(ghost);
         ghost = null;
     }
@@ -99,12 +123,45 @@ public class BuildingPlacementSystem : MonoBehaviour
     {
         point = default;
         var ray = cam.ScreenPointToRay(Input.mousePosition);
+
         if (Physics.Raycast(ray, out var hit, 1000f, groundMask))
         {
             point = hit.point;
             return true;
         }
+
         return false;
+    }
+
+    private void HandleRotationInput()
+    {
+        if (selectedDefinition == null) return;
+        if (!selectedDefinition.isWallSegment) return;
+
+        float step = Mathf.Max(1f, selectedDefinition.wallRotationStep);
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            currentRotationY += step;
+            if (currentRotationY >= 360f)
+                currentRotationY -= 360f;
+        }
+    }
+
+    private Vector3 GetPlacementPoint(Vector3 rawPoint)
+    {
+        if (selectedDefinition == null)
+            return rawPoint;
+
+        if (!selectedDefinition.isWallSegment)
+            return rawPoint;
+
+        float snap = Mathf.Max(0.1f, selectedDefinition.wallSegmentLength);
+
+        float snappedX = Mathf.Round(rawPoint.x / snap) * snap;
+        float snappedZ = Mathf.Round(rawPoint.z / snap) * snap;
+
+        return new Vector3(snappedX, rawPoint.y, snappedZ);
     }
 
     private void CreateGhost()
@@ -113,9 +170,13 @@ public class BuildingPlacementSystem : MonoBehaviour
 
         ghost = GameObject.CreatePrimitive(PrimitiveType.Cube);
         ghost.name = "BuildingGhost";
-        Destroy(ghost.GetComponent<Collider>());
 
-        // Temporary size (we can tie this to the BuildingDefinition later)
+        Collider ghostCollider = ghost.GetComponent<Collider>();
+        if (ghostCollider != null)
+        {
+            Destroy(ghostCollider);
+        }
+
         ghost.transform.localScale = new Vector3(2, 0.5f, 2);
     }
 
@@ -124,6 +185,17 @@ public class BuildingPlacementSystem : MonoBehaviour
         if (ghost == null) return;
 
         ghost.transform.position = new Vector3(point.x, point.y + 0.25f, point.z);
+        ghost.transform.rotation = Quaternion.Euler(0f, currentRotationY, 0f);
+
+        if (selectedDefinition != null && selectedDefinition.isWallSegment)
+        {
+            float length = Mathf.Max(0.1f, selectedDefinition.wallSegmentLength);
+            ghost.transform.localScale = new Vector3(0.75f, 2f, length);
+        }
+        else
+        {
+            ghost.transform.localScale = new Vector3(2, 0.5f, 2);
+        }
     }
 
     private void PlaceBuildSite(Vector3 point)
@@ -173,12 +245,14 @@ public class BuildingPlacementSystem : MonoBehaviour
             return;
         }
 
-        var buildSite = Instantiate(buildSitePrefab, point, Quaternion.identity);
+        Quaternion spawnRotation = Quaternion.Euler(0f, currentRotationY, 0f);
+
+        var buildSite = Instantiate(buildSitePrefab, point, spawnRotation);
         buildSite.Init(selectedDefinition, teamId);
 
         activeBuilder.BeginBuild(buildSite);
 
-        Debug.Log($"Placed BuildSite for {selectedDefinition.buildingName} at {point}");
+        Debug.Log($"Placed BuildSite for {selectedDefinition.buildingName} at {point} with rotation {currentRotationY}");
 
         CancelPlacement();
     }

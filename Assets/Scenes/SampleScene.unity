@@ -2947,7 +2947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.78
+      value: -0.24
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2955,7 +2955,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.72
+      value: -4.47
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3265,8 +3265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 200}
+  m_AnchoredPosition: {x: -0.5, y: -400}
+  m_SizeDelta: {x: 799, y: 201}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1958374184
 GameObject:
@@ -3299,7 +3299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.2}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3331,14 +3331,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1958374184}
-  m_LocalRotation: {x: -0, y: -0.5000001, z: 0, w: -0.86602527}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1915822264}
   m_Father: {fileID: 1100797645}
-  m_LocalEulerAnglesHint: {x: 0, y: -300, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}

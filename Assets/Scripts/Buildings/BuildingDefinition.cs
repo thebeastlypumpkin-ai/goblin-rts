@@ -38,4 +38,9 @@ public class BuildingDefinition : ScriptableObject
     public bool supportsTierUpgrades = true;
     [Min(1)] public int startingTier = 1;
     [Min(1)] public int maxTier = 3;
+
+    [Header("Wall Placement")]
+    public bool isWallSegment = false;
+    [Min(0.1f)] public float wallSegmentLength = 5f;
+    [Min(1f)] public float wallRotationStep = 90f;
 }

@@ -28,3 +28,6 @@ MonoBehaviour:
   supportsTierUpgrades: 1
   startingTier: 1
   maxTier: 3
+  isWallSegment: 1
+  wallSegmentLength: 5
+  wallRotationStep: 90
