@@ -105,7 +105,22 @@ public class MatchResultManager : MonoBehaviour
             }
 
             Debug.Log($"Victory! Team {winningTeam} is the last team remaining.");
+
+            if (SpectatorManager.Instance != null)
+            {
+                int localTeam = SpectatorManager.Instance.LocalTeamId;
+
+                if (winningTeam == localTeam)
+                {
+                    if (MatchEndUI.Instance != null)
+                    {
+                        MatchEndUI.Instance.ShowVictory();
+                        Debug.Log("[MatchEndUI] Showing VICTORY.");
+                    }
+                }
+            }
         }
+
         else
         {
             Debug.Log("Match Ended. No teams remain alive.");
@@ -132,6 +147,11 @@ public class MatchResultManager : MonoBehaviour
             localPlayerDefeated = true;
 
             Debug.Log($"[Spectator] Local player team {localTeam} has been defeated.");
+
+            if (MatchEndUI.Instance != null)
+            {
+                MatchEndUI.Instance.ShowDefeat();
+            }
 
             if (SpectatorManager.Instance != null)
             {
