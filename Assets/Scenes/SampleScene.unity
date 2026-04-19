@@ -2472,11 +2472,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2800481746817615, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: attackDamage
-      value: 80
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 41.24
+      value: 0.78
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2484,7 +2484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.25
+      value: -5.72
       objectReference: {fileID: 0}
     - target: {fileID: 2967609462889274226, guid: 17e3c63a6dc17c246ac4db3b1d0cc65d, type: 3}
       propertyPath: m_LocalRotation.w

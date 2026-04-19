@@ -27,6 +27,29 @@ public class Builder : MonoBehaviour
         }
     }
 
+    private bool CanBuildSite(BuildSite site)
+    {
+        if (site == null)
+            return false;
+
+        TeamMember myTeam = GetComponent<TeamMember>();
+        if (myTeam == null)
+        {
+            Debug.LogWarning($"{name} cannot build because it has no TeamMember.");
+            return false;
+        }
+
+        int myTeamId = (int)myTeam.Team;
+
+        if (site.teamId != myTeamId)
+        {
+            Debug.LogWarning($"{name} refused to build {site.name}. Builder team={myTeamId}, Site team={site.teamId}");
+            return false;
+        }
+
+        return true;
+    }
+
     public void BeginBuild(BuildSite site)
     {
         Debug.Log($"[Builder] BeginBuild called on {name} for site {(site != null ? site.name : "NULL")}");
@@ -34,6 +57,11 @@ public class Builder : MonoBehaviour
         if (site == null)
         {
             Debug.LogWarning("Builder.BeginBuild called with null BuildSite.");
+            return;
+        }
+
+        if (!CanBuildSite(site))
+        {
             return;
         }
 

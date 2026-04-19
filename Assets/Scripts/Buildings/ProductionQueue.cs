@@ -33,6 +33,15 @@ public class ProductionQueue : MonoBehaviour
         teamId = newTeamId;
     }
 
+    private bool CanLocalPlayerUseThisQueue()
+    {
+        if (SpectatorManager.Instance == null)
+            return true;
+
+        int localTeamId = SpectatorManager.Instance.LocalTeamId;
+        return teamId == localTeamId;
+    }
+
 
     void Update()
     {
@@ -54,6 +63,13 @@ public class ProductionQueue : MonoBehaviour
 
     public void EnqueueUnit(UnitDefinition unit)
     {
+
+        if (!CanLocalPlayerUseThisQueue())
+        {
+            Debug.LogWarning($"Enqueue blocked: local team cannot use production queue on {gameObject.name}. Queue team={teamId}");
+            return;
+        }
+
         if (building == null)
         {
             Debug.LogWarning("ProductionQueue missing Building reference.");

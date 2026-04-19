@@ -79,6 +79,26 @@ public class SelectionManager : MonoBehaviour
             Building building = buildingHit.collider.GetComponentInParent<Building>();
             if (building != null)
             {
+                TeamMember buildingTeam = building.GetComponent<TeamMember>();
+
+                if (buildingTeam == null)
+                {
+                    Debug.LogWarning($"Selection blocked: {building.name} has no TeamMember.");
+                    return;
+                }
+
+                int localTeamId = 0;
+                if (SpectatorManager.Instance != null)
+                {
+                    localTeamId = SpectatorManager.Instance.LocalTeamId;
+                }
+
+                if ((int)buildingTeam.Team != localTeamId)
+                {
+                    Debug.Log($"Selection blocked: enemy building {building.name}");
+                    return;
+                }
+
                 ClearSelection();
                 selectedBuilding = building;
                 Debug.Log("Selected building: " + building.name);
