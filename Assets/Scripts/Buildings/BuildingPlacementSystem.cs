@@ -8,7 +8,7 @@ public class BuildingPlacementSystem : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private BuildSite buildSitePrefab;
     [SerializeField] private Builder builder;
-    [SerializeField] private BuildingDefinition debugWallDefinition;
+    
 
     private Builder activeBuilder;
     private BuildingDefinition selectedDefinition;
@@ -25,18 +25,6 @@ public class BuildingPlacementSystem : MonoBehaviour
 
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            if (debugWallDefinition != null)
-            {
-                StartPlacing(debugWallDefinition);
-            }
-            else
-            {
-                Debug.LogWarning("BuildingPlacementSystem: debugWallDefinition is not assigned.");
-            }
-        }
 
         if (!IsPlacing) return;
 

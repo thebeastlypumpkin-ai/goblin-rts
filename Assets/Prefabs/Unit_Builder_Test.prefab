@@ -135,6 +135,7 @@ MonoBehaviour:
   supplyCost: 1
   attackDamage: 10
   attackRange: 1.5
+  buildingAttackRangeBonus: 1.5
   attacksPerSecond: 1
   detectionRange: 8
   combatAnchorLeashRange: 3
@@ -144,7 +145,6 @@ MonoBehaviour:
   activeStatusTimer: 0
   activeStatusStrength: 0
   scanInterval: 0.25
-  manualAttackLeashRange: 25
   moveArrivalThreshold: 0.5
   healthBarPrefab: {fileID: 3551509675295894627, guid: 677c05a6e0b9a7a44a6b3ca24b20c4e4, type: 3}
   healthBarOffset: {x: 0, y: 2, z: 0}
@@ -196,6 +196,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Builder
   buildRange: 0.75
+  availableBuildings:
+  - {fileID: 11400000, guid: 1bffe76dc892f394a8f9702b3368360c, type: 2}
+  - {fileID: 11400000, guid: 6f8a045798aeffb45af81fe11690554c, type: 2}
+  - {fileID: 11400000, guid: cdc31c8b668a95546a02495550d29468, type: 2}
+  - {fileID: 11400000, guid: 97482b87e50b883439c4a305886e9006, type: 2}
+  - {fileID: 11400000, guid: 26c74128f881d144aaed8f1b63ef4a34, type: 2}
+  - {fileID: 11400000, guid: 6646f416d0d48654087412c04dac1664, type: 2}
+  - {fileID: 11400000, guid: aeeaaf48c17876549b98063e47eb45bf, type: 2}
+  - {fileID: 11400000, guid: 216928ba2ecea7a4ab7138521a7af361, type: 2}
   isBuilding: 0
 --- !u!114 &6284051087763232372
 MonoBehaviour:

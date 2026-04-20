@@ -7,9 +7,13 @@ public class Builder : MonoBehaviour
     [Tooltip("How close the builder must be to the build site to start/continue channeling.")]
     [Min(0.1f)] public float buildRange = 0.75f;
 
+    [Header("Build Options")]
+    [SerializeField] private BuildingDefinition[] availableBuildings;
+
     [Tooltip("If true, the builder is currently channeling construction.")]
     public bool IsBuilding => isBuilding;
     public BuildSite CurrentBuildSite => currentBuildSite;
+    public BuildingDefinition[] AvailableBuildings => availableBuildings;
 
     [SerializeField] private bool isBuilding;
 
@@ -105,7 +109,6 @@ public class Builder : MonoBehaviour
 
         float dist = Vector3.Distance(transform.position, currentBuildSite.transform.position);
 
-        // Step 1: move until in range
         if (isMovingToBuildSite)
         {
             if (dist <= buildRange)
@@ -120,7 +123,6 @@ public class Builder : MonoBehaviour
             return;
         }
 
-        // Step 2: actively build while in range
         if (!isBuilding)
             return;
 
