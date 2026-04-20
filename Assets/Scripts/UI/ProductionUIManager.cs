@@ -5,6 +5,10 @@ public class ProductionUIManager : MonoBehaviour
 {
     [SerializeField] private GameObject panel;
 
+    [Header("Mode Roots")]
+    [SerializeField] private GameObject buildingModeRoot;
+    [SerializeField] private GameObject builderModeRoot;
+
     [Header("Unit Production")]
     [SerializeField] private ProductionButtonUI unitButton;
 
@@ -30,10 +34,14 @@ public class ProductionUIManager : MonoBehaviour
     {
         panel.SetActive(false);
 
+        if (buildingModeRoot != null)
+            buildingModeRoot.SetActive(false);
+
+        if (builderModeRoot != null)
+            builderModeRoot.SetActive(false);
+
         if (builderButtonPrefab != null)
-        {
             builderButtonPrefab.gameObject.SetActive(false);
-        }
     }
 
     private void Update()
@@ -50,7 +58,6 @@ public class ProductionUIManager : MonoBehaviour
             selectedBuilder = selectedUnits[0].GetComponent<Builder>();
         }
 
-        // BUILDING SELECTED
         if (selectedBuilding != null)
         {
             if (selectedBuilding != lastBuilding || !showingBuildingUI)
@@ -65,7 +72,6 @@ public class ProductionUIManager : MonoBehaviour
             return;
         }
 
-        // BUILDER SELECTED
         if (selectedBuilder != null)
         {
             if (selectedBuilder != lastBuilder || !showingBuilderUI)
@@ -80,7 +86,6 @@ public class ProductionUIManager : MonoBehaviour
             return;
         }
 
-        // NOTHING RELEVANT SELECTED
         if (showingBuildingUI || showingBuilderUI || panel.activeSelf)
         {
             HideAllUI();
@@ -120,23 +125,20 @@ public class ProductionUIManager : MonoBehaviour
 
         panel.SetActive(true);
 
+        if (buildingModeRoot != null)
+            buildingModeRoot.SetActive(true);
+
+        if (builderModeRoot != null)
+            builderModeRoot.SetActive(false);
+
         if (buildingNameText != null)
-        {
-            buildingNameText.gameObject.SetActive(true);
             buildingNameText.text = selectedBuilding.name;
-        }
 
         if (teamText != null)
-        {
-            teamText.gameObject.SetActive(true);
             teamText.text = "Friendly";
-        }
 
         if (healthText != null)
-        {
-            healthText.gameObject.SetActive(true);
             healthText.text = $"HP: {Mathf.CeilToInt(selectedBuilding.CurrentHealth)} / {Mathf.CeilToInt(selectedBuilding.MaxHealth)}";
-        }
 
         if (unitButton != null)
         {
@@ -153,14 +155,11 @@ public class ProductionUIManager : MonoBehaviour
     {
         panel.SetActive(true);
 
-        if (buildingNameText != null)
-            buildingNameText.gameObject.SetActive(false);
+        if (buildingModeRoot != null)
+            buildingModeRoot.SetActive(false);
 
-        if (teamText != null)
-            teamText.gameObject.SetActive(false);
-
-        if (healthText != null)
-            healthText.gameObject.SetActive(false);
+        if (builderModeRoot != null)
+            builderModeRoot.SetActive(true);
 
         if (unitButton != null)
             unitButton.gameObject.SetActive(false);
@@ -207,17 +206,14 @@ public class ProductionUIManager : MonoBehaviour
     {
         panel.SetActive(false);
 
+        if (buildingModeRoot != null)
+            buildingModeRoot.SetActive(false);
+
+        if (builderModeRoot != null)
+            builderModeRoot.SetActive(false);
+
         if (unitButton != null)
             unitButton.gameObject.SetActive(false);
-
-        if (buildingNameText != null)
-            buildingNameText.gameObject.SetActive(true);
-
-        if (teamText != null)
-            teamText.gameObject.SetActive(true);
-
-        if (healthText != null)
-            healthText.gameObject.SetActive(true);
 
         HideAllBuilderButtons();
     }
@@ -227,9 +223,7 @@ public class ProductionUIManager : MonoBehaviour
         ClearSpawnedBuilderButtons();
 
         if (builderButtonPrefab != null)
-        {
             builderButtonPrefab.gameObject.SetActive(false);
-        }
     }
 
     private void ClearSpawnedBuilderButtons()
