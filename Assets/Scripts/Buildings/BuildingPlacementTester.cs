@@ -11,6 +11,7 @@ public class BuildingPlacementTester : MonoBehaviour
     [SerializeField] private BuildingDefinition towerADefinition;
     [SerializeField] private BuildingDefinition towerBDefinition;
     [SerializeField] private BuildingDefinition wallDefinition;
+    [SerializeField] private BuildingDefinition gateDefinition;
 
 
 
@@ -70,6 +71,12 @@ public class BuildingPlacementTester : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             placementSystem.StartPlacing(wallDefinition);
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            placementSystem.StartPlacing(gateDefinition);
+            Debug.Log("Gate placement started.");
         }
 
 

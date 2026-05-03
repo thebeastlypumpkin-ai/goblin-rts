@@ -3970,6 +3970,7 @@ MonoBehaviour:
   towerADefinition: {fileID: 11400000, guid: 6646f416d0d48654087412c04dac1664, type: 2}
   towerBDefinition: {fileID: 11400000, guid: aeeaaf48c17876549b98063e47eb45bf, type: 2}
   wallDefinition: {fileID: 11400000, guid: 216928ba2ecea7a4ab7138521a7af361, type: 2}
+  gateDefinition: {fileID: 11400000, guid: ced3f9387c5f723479e94b503dde8262, type: 2}
 --- !u!1001 &5581273792711740202
 PrefabInstance:
   m_ObjectHideFlags: 0

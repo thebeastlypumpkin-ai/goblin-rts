@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af76fb15964db5248a11890d1acdce05, type: 3}
+  m_Name: BD_Gate
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingDefinition
+  buildingName: Gate
+  completedBuildingPrefab: {fileID: 7630199160941845254, guid: d01fd70dc33c4944d895fd2f0e1b4f60, type: 3}
+  cost: 20
+  buildTimeSeconds: 5
+  maxHealth: 3000
+  enablePassiveRepair: 1
+  passiveRepairDelay: 5
+  passiveRepairPerSecond: 5
+  incomePerTick: 0
+  supplyProvided: 0
+  isFortress: 0
+  isProductionBuilding: 0
+  fortressBaselineIncomePerTick: 0
+  supportsTierUpgrades: 1
+  startingTier: 1
+  maxTier: 3
+  isWallSegment: 1
+  wallSegmentLength: 5
+  wallRotationStep: 90
