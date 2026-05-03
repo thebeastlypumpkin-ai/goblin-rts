@@ -144,7 +144,7 @@ public class BuildingPlacementSystem : MonoBehaviour
         if (!selectedDefinition.isWallSegment)
             return rawPoint;
 
-        float snap = Mathf.Max(0.1f, selectedDefinition.wallSegmentLength);
+        float snap = Mathf.Max(0.1f, selectedDefinition.wallSegmentLength * 0.5f);
 
         float snappedX = Mathf.Round(rawPoint.x / snap) * snap;
         float snappedZ = Mathf.Round(rawPoint.z / snap) * snap;

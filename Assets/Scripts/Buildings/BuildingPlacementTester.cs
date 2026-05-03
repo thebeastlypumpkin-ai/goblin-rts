@@ -67,7 +67,7 @@ public class BuildingPlacementTester : MonoBehaviour
             placementSystem.StartPlacing(towerBDefinition);
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             placementSystem.StartPlacing(wallDefinition);
         }
