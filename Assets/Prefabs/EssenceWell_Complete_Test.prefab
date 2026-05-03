@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6199600216493730992}
   - component: {fileID: -39726586105164704}
   - component: {fileID: -2443458551553975014}
+  - component: {fileID: 1004670800260873697}
+  - component: {fileID: -6600912344028424417}
   m_Layer: 0
   m_Name: EssenceWell_Complete_Test
   m_TagString: Untagged
@@ -155,3 +157,28 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &1004670800260873697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827c4a538f401094ca3739ac9e1d495e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMember
+  team: 1
+--- !u!114 &-6600912344028424417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7543697616109106897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c1407ae10ffed4eaad3a688599a0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamColorApplier

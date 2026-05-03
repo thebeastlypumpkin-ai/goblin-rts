@@ -115,10 +115,6 @@ public class Building : MonoBehaviour
         {
             productionQueue.SetTeamId(teamId);
         }
-        else
-        {
-            Debug.LogWarning($"{name} is missing TeamMember in Init.");
-        }
     }
 
     private void Awake()
